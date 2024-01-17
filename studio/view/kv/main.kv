@@ -1,0 +1,78 @@
+<ScreenMain>:
+    image_video: image_video
+    lien: lien
+    md_bg_color: "#262626"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTextField:
+            id: lien
+            hint_text: "Entre le Lien:"
+
+        MDBoxLayout:
+            orientation:"vertical"
+            pos_hint: { "center_x" : .3, "center_y": 0.3}
+            padding: 10
+            spacing: 10
+            adaptive_width: True
+
+            MDBoxLayout:
+                orientation:"horizontal"
+                padding: 10
+                spacing: 10
+                adaptive_height: True
+
+                MDRectangleFlatIconButton:
+                    id: camera
+                    icon_right: "camera"
+                    text: "Camera"
+                    pos_hint: {"center_x": .3}
+                    on_release: app.lancer()
+                    adaptive_size: True
+
+                MDRectangleFlatIconButton:
+                    id: camera
+                    icon_right: "Capture"
+                    text: "Capture"
+                    pos_hint: {"center_x": .7}
+                    on_release: app.captureCamera()
+                    adaptive_size: True
+
+        MDBoxLayout:
+            orientation:"vertical"
+            spacing: 10
+            size_hint: None, None
+            width: dp(500)
+            height: dp(500)
+
+            Image:
+                id: image_video
+                size_hint: None, None
+                width: 300
+                height: 300
+                pos_hint: {"center_x": .5}
+
+        MDBoxLayout:
+            orientation:"horizontal"
+            spacing: 10
+
+            MDRectangleFlatIconButton:
+                id: save
+                icon_right: "save"
+                text: "Enregistrer"
+                pos_hint: {"center_x": .3}
+                on_release: app.enregistrer()
+                adaptive_size: True
+
+            MDRectangleFlatIconButton:
+                id: stop
+                icon_right: "stop"
+                text: "Stop"
+                pos_hint: {"center_x": .7}
+                on_release: app.stop()
+                adaptive_size: True
+
+            MDWidget:
+                size_hint_y: None
+                height: dp(80)
