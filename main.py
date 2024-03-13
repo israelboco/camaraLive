@@ -9,12 +9,14 @@ from kivy.uix.image import Image
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 from kivymd.app import MDApp
+from kivymd.font_definitions import fonts
 from kivymd.uix.screen import MDScreen
 from kivymd.utils import asynckivy
 
 # from apscheduler.schedulers.blocking import BlockingScheduler as Scheduler
 # from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from studio.view.CameraFrame import Camera
+from studio.view.CardAudio import CardAudio
 from studio.view.MenuFrame import MenuBar
 from studio.view.ScreenMain import ScreenMain
 from studio.view.Tabs import Tab
@@ -24,7 +26,7 @@ Builder.load_file("studio/view/kv/main.kv")
 
 
 class AppCameraLive(MDApp):
-    icons = list(md_icons.keys())[15:19]
+    index = 1
 
     def build(self) -> MDScreen:
         self.title = "Camera Live"
@@ -32,10 +34,40 @@ class AppCameraLive(MDApp):
         return self.screenMain
 
     def on_start(self):
+        tab = Tab(title="CamLive 1")
+        self.root.ids.tabs.add_widget(tab)
 
-        for name_tab in self.icons:
-            tab = Tab(title="Cam " + name_tab)
-            self.root.ids.tabs.add_widget(tab)
+    def add_tab(self):
+        self.index += 1
+        name_tab = f"CamLive {self.index}"
+        self.root.ids.tabs.add_widget(
+            Tab(
+                tab_label_text=f"[ref={name_tab}][font={fonts[-1]['fn_regular']}]{md_icons['close']}[/font][/ref]{name_tab}"
+            )
+        )
+
+    def remove_tab(self):
+        if self.index > 1:
+            self.index -= 1
+        self.root.ids.tabs.remove_widget(
+            self.root.ids.tabs.get_tab_list()[-1]
+        )
+
+    def on_ref_press(
+            self,
+            instance_tabs,
+            instance_tab_label,
+            instance_tab,
+            instance_tab_bar,
+            instance_carousel,
+    ):
+
+        # Removes a tab by clicking on the close icon on the left.
+        for instance_tab in instance_carousel.slides:
+            if instance_tab.tab_label_text == instance_tab_label.text:
+                instance_tabs.remove_widget(instance_tab_label)
+                self.index -= 1
+                break
 
 
 app = AppCameraLive()
