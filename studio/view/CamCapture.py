@@ -12,7 +12,7 @@ from studio.view.MenuFrame import MenuBar
 
 class CamCapture:
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        # super().__init__(**kwargs)
         self.capture = 0
         self.screenMain = None
         self.videoCamera = None
