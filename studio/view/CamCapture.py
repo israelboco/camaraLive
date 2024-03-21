@@ -7,15 +7,14 @@ from kivy.core.image import Texture
 from kivymd.utils import asynckivy
 
 from studio.view.CameraFrame import Camera
-from studio.view.CardAudio import CardAudio
 from studio.view.MenuFrame import MenuBar
-from studio.view.ScreenMain import CardImage
 from studio.view.Tabs import Tab
 
 
-class CamCapture(CardImage, CardAudio):
-    def __init__(self, **kwargs):
+class CamCapture:
+    def __init__(self, tab, **kwargs):
         super().__init__(**kwargs)
+        self.tab = tab
         self.capture = 0
         self.screenMain = None
         self.videoCamera = None

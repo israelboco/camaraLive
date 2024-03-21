@@ -37,9 +37,9 @@ class AppCameraLive(MDApp):
         return self.screenMain
 
     def on_start(self):
-        tab = Tab(title="CamLive 1")
+        tab = Tab(id='1', title="CamLive 1")
         self.root.ids.tabs.add_widget(tab)
-        camlive = CamCapture()
+        camlive = CamCapture(tab)
         process = MyProcess(target_function=camlive, args=())
         self.listProces.append(process)
         process.start()
@@ -54,13 +54,14 @@ class AppCameraLive(MDApp):
     def add_tab(self):
         self.index += 1
         name_tab = f"CamLive {self.index}"
-        self.root.ids.tabs.add_widget(
-            Tab(
-                id=str(self.index),
-                tab_label_text=f"[ref={name_tab}][font={fonts[-1]['fn_regular']}]{md_icons['close']}[/font][/ref]{name_tab}"
-            )
+        tab = Tab(
+            id=str(self.index),
+            tab_label_text=f"[ref={name_tab}][font={fonts[-1]['fn_regular']}]{md_icons['close']}[/font][/ref]{name_tab}"
         )
-        camlive = CamCapture()
+        self.root.ids.tabs.add_widget(
+             tab
+        )
+        camlive = CamCapture(tab)
         process = MyProcess(target_function=camlive, args=())
         self.listProces.append(process)
         process.start()
