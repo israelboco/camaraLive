@@ -19,6 +19,7 @@
                 pos_hint: {"center_y": .96}
 
                 MDSpinner:  
+                    id: spinner
                     size_hint: None, None
                     size: dp(20), dp(20)
                     pos_hint: {'center_x': .5, 'center_y': .5}
@@ -28,6 +29,7 @@
                     id: lien
                     hint_text: "source"
                     mode: 'rectangle'
+                    on_text: app.on_text()
 
 
                 MDIconButton:

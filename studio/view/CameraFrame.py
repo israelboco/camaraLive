@@ -30,11 +30,11 @@ class Camera:
         else:
             self.lien = lien
             lien = lien + "/video"
-        await asynckivy.sleep(0)
+        await asynckivy.sleep(0.3)
         self.filename = datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
         self.filename_video = "{}.mp4".format(self.filename)
         self.filename_audio = "{}".format(self.filename)
-        return self.start_AVrecording(lien, self.filename_video)
+        return asynckivy.start(self.start_AVrecording(lien, self.filename_video))
 
     async def start_AVrecording(self, lien, filename):
         global video_thread
@@ -48,11 +48,7 @@ class Camera:
         except:
             audio_thread = AudioRecorder(self.filename_audio)
 
-        process = MyProcess(target_function=video_thread.demarage, args=(lien, filename))
-        self.listProces.append(process)
-        process.start()
-        process.join()
-        # return video_thread.demarage(lien, filename)
+        return video_thread.demarage(lien, filename)
 
     async def record_demarage(self, frames_to_record):
         await asynckivy.sleep(0)

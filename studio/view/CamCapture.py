@@ -8,15 +8,15 @@ from kivymd.utils import asynckivy
 
 from studio.view.CameraFrame import Camera
 from studio.view.MenuFrame import MenuBar
-from studio.view.Tabs import Tab
 
 
 class CamCapture:
-    def __init__(self, tab, **kwargs):
+    def __init__(self, lien=None, image_video=None, tab=None, **kwargs):
         super().__init__(**kwargs)
         self.tab = tab
         self.capture = 0
-        self.screenMain = None
+        self.lien = lien
+        self.image_video = image_video
         self.videoCamera = None
 
         self.cameraVideo = Camera()
@@ -29,9 +29,6 @@ class CamCapture:
         self.frames_to_record = []
 
     #        self.window.mainloop()
-
-    def terminer(self):
-        self.window.quit()
 
     def captureCamera(self):
         self.capture = 1
@@ -56,7 +53,7 @@ class CamCapture:
 
     def lancer(self):
         if self.videoCamera is None:
-            self.videoCamera = asynckivy.start(self.cameraVideo.afficheCamara(self.screenMain.lien.text))
+            self.videoCamera = asynckivy.start(self.cameraVideo.afficheCamara(self.lien))
 
         self.update()
 
@@ -73,7 +70,7 @@ class CamCapture:
                 image_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
                 image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                 # display image from the texture
-                self.screenMain.image_video.texture = image_texture
+                self.image_video.texture = image_texture
                 if self.capture >= 1:
                     name = str(self.capture) + "_" + datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
                     self.save_frame_camera_key("enregistrement/capture", 'capture', name, frame)

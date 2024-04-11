@@ -98,6 +98,19 @@ class AppCameraLive(MDApp):
                 break
 # .split('-')[1]
 
+    def on_text(self):
+        text = self.screenMain.ids.lien.text
+        if text:
+            self.screenMain.ids.spinner.active = True
+            self.start_source(text)
+        else:
+            self.screenMain.ids.spinner.active = False
+    
+    def start_source(self, text):
+        start_video = CamCapture(text, self.screenMain.ids.tt.image)
+        start_video.lancer()
+
+
 
 app = AppCameraLive()
 app.run()

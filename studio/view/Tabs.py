@@ -2,6 +2,8 @@ from kivy.properties import ObjectProperty
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.tab import MDTabsBase
 
+from studio.view.CamCapture import CamCapture
+
 
 class Tab(MDFloatLayout, MDTabsBase):
     '''Class implementing content for a tab.''' 
@@ -15,4 +17,5 @@ class Tab(MDFloatLayout, MDTabsBase):
             self.ids.spinner.active = False
     
     def start_source(self, text):
-        pass
+        start_video = CamCapture(text, self.ids.cardImage.image)
+        start_video.lancer()

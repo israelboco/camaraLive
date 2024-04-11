@@ -13,7 +13,6 @@ class MenuBar(Frame):
         me1 = Menu(fileMenu)
         me1.add_command(label='Options', underline=0)
         me1.add_command(label='Restart', underline=0)
-        me1.add_command(label='Terminer', underline=0, command=self.window.terminer)
         fileMenu.configure(menu=me1)
         ##### Menu <Aide> #####
         helpMenu = Menubutton(self, text='Aide')
