@@ -1,11 +1,14 @@
 import multiprocessing
 
 
-class MyProcess(multiprocessing.Process):
+class MyProcess():
     def __init__(self, target_function, args=()):
         super().__init__()
-        self.target_function = target_function
+        self.target = target_function
         self.args = args
 
     def run(self):
-        self.target_function(*self.args)
+        process = multiprocessing.Process(target=self.target, args=self.args)
+        process.start()
+        process.join()
+        

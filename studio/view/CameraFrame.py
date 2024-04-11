@@ -45,10 +45,17 @@ class Camera:
         try:
             int(self.lien)
             audio_thread = AudioRecorder(self.filename_audio, self.lien)
-        except:
+        except Exception as e:  # noqa: E722
+            print(e)
             audio_thread = AudioRecorder(self.filename_audio)
-
-        return video_thread.demarage(lien, filename)
+        try:
+            process = MyProcess(target_function=video_thread.demarage, args=(lien, filename))
+            self.listProces.append(process)
+            process.run()
+            return video_thread.video_cap()
+        except Exception as e:
+            print(e)
+            
 
     async def record_demarage(self, frames_to_record):
         await asynckivy.sleep(0)
