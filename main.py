@@ -40,16 +40,18 @@ class AppCameraLive(MDApp):
         tab = Tab(id='1', title="CamLive 1")
         self.root.ids.tabs.add_widget(tab)
         camlive = CamCapture(tab)
-        process = MyProcess(target_function=camlive, args=())
-        self.listProces.append(process)
-        process.start()
-        process.join()
+        #process = MyProcess(target_function=camlive, args=())
+        # self.listProces.append(process)
+        # process.start()
+        # process.join()
 
     def on_stop(self):
-        print(self.listProces)
-        for proces in self.listProces:
-            proces.terminate()
-        print(self.listProces.clear())
+        pass
+        # print(self.listProces)
+        # for proces in self.listProces:
+        #     proces.terminate()
+        #     pass
+        # print(self.listProces.clear())
 
     def add_tab(self):
         self.index += 1
@@ -62,10 +64,10 @@ class AppCameraLive(MDApp):
              tab
         )
         camlive = CamCapture(tab)
-        process = MyProcess(target_function=camlive, args=())
-        self.listProces.append(process)
-        process.start()
-        process.join()
+        # process = MyProcess(target_function=camlive, args=())
+        # self.listProces.append(process)
+        # process.start()
+        # process.join()
 
     def remove_tab(self):
         if self.index > 1:
@@ -87,11 +89,11 @@ class AppCameraLive(MDApp):
             if instance_tab.tab_label_text == instance_tab_label.text:
                 instance_tabs.remove_widget(instance_tab_label)
                 self.index -= 1
-                index = int(instance_tab.id) - 1
-                self.listProces[index].terminate()
-                print(self.listProces[index])
-                self.listProces.remove(self.listProces[index])
-                print(self.listProces)
+                # index = int(instance_tab.id) - 1
+                # self.listProces[index].terminate()
+                # print(self.listProces[index])
+                # self.listProces.remove(self.listProces[index])
+                # print(self.listProces)
                 # process.terminate()
                 break
 # .split('-')[1]

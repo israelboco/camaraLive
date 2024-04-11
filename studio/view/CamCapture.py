@@ -45,7 +45,7 @@ class CamCapture:
         # progress.pack(pady=30)
         # progress.start(10)
         self.recording = not self.recording
-        self.frames_to_record = self.cameraVideo.enregistrer(self.frames_to_record)
+        self.frames_to_record = asynckivy.start(self.cameraVideo.enregistrer(self.frames_to_record))
         self.record_demarage = False
 
         # progress.stop()
@@ -56,7 +56,7 @@ class CamCapture:
 
     def lancer(self):
         if self.videoCamera is None:
-            self.videoCamera = self.cameraVideo.afficheCamara(self.screenMain.lien.text)
+            self.videoCamera = asynckivy.start(self.cameraVideo.afficheCamara(self.screenMain.lien.text))
 
         self.update()
 
@@ -88,7 +88,7 @@ class CamCapture:
                     if not self.record_demarage:
                         self.record_demarage = not self.record_demarage
                         self.cameraVideo.record_demarage(self.frames_to_record)
-                        self.record_update()
+                        asynckivy.start(self.record_update())
 
             # Appeler récursivement la fonction update après un certain délai
             # await self.afert(16, self.update())
@@ -96,19 +96,18 @@ class CamCapture:
             time = 1 / 30
             self.afert(time, self.update)
 
-    def record_update(self, dt=None):
-        async def record_update():
-            if self.recording and self.frames_to_record:
-                await asynckivy.sleep(0)
-                self.frames_to_record = self.cameraVideo.update_enregistrer(self.frames_to_record)
-                self.afert(10, self.record_update)
-                # self.window.after(15000, self.record_update)
+    async def record_update(self, dt=None):
+        if self.recording and self.frames_to_record:
+            await asynckivy.sleep(0)
+            self.frames_to_record = self.cameraVideo.update_enregistrer(self.frames_to_record)
+            self.afert(10, asynckivy.start(self.record_update))
+            # self.window.after(15000, self.record_update)
 
-        asynckivy.start(record_update())
+        asynckivy.start(self.record_update())
 
     def stopCamera(self):
         self.recording = not self.recording
-        self.frames_to_record = self.cameraVideo.enregistrer(self.frames_to_record)
+        self.frames_to_record = asynckivy.start(self.cameraVideo.enregistrer(self.frames_to_record))
         self.record_demarage = False
 
     def save_frame_camera_key(self, dir_path, basename, n, frame, ext='jpg'):

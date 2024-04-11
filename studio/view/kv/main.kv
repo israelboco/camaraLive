@@ -2,7 +2,7 @@
     md_bg_color: "#262626"
 
     MDBoxLayout:
-        orientation:"horizontal"
+        orientation: "horizontal"
 
         MDBoxLayout:
             orientation: "vertical"
@@ -18,10 +18,17 @@
                 spacing: "5dp"
                 pos_hint: {"center_y": .96}
 
+                MDSpinner:  
+                    size_hint: None, None
+                    size: dp(20), dp(20)
+                    pos_hint: {'center_x': .5, 'center_y': .5}
+                    active: False
+
                 MDTextField:
                     id: lien
                     hint_text: "source"
                     mode: 'rectangle'
+
 
                 MDIconButton:
                     icon: "menu"
@@ -159,9 +166,19 @@
                 on_release:
                     app.add_tab()
 
+            MDSpinner:
+                id: spinner
+                size_hint: None, None
+                size: dp(20), dp(20)
+                pos_hint: {'center_x': .5, 'center_y': .5}
+                active: False
+
             MDTextField:
+                id: source
                 hint_text: "source"
                 mode: 'rectangle'
+                on_text: root.on_text()
+                # phone_mask: "phone"
 
             MDIconButton:
                 icon: 'folder'

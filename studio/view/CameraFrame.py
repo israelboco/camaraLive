@@ -5,10 +5,13 @@ import subprocess
 import shutil
 from datetime import datetime
 from studio.view.AudioRecorder import AudioRecorder
+from studio.view.MyProcess import MyProcess
 from studio.view.VideoRecorder import VideoRecorder
+from kivymd.utils import asynckivy
 
 
 class Camera:
+    listProces = []
 
     def __int__(self, lien=None):
         self.lien = lien
@@ -19,55 +22,67 @@ class Camera:
         self.filename_video_2 = None
         self.filename_video_final = None
 
-    def afficheCamara(self, lien):
+    async def afficheCamara(self, lien):
         print(lien)
-        if len(lien) == 1:
+        if len(lien) == 1 and lien == "0":
             self.lien = int(lien)
             lien = int(lien)
         else:
             self.lien = lien
             lien = lien + "/video"
+        await asynckivy.sleep(0)
         self.filename = datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
         self.filename_video = "{}.mp4".format(self.filename)
         self.filename_audio = "{}".format(self.filename)
         return self.start_AVrecording(lien, self.filename_video)
 
-    def start_AVrecording(self, lien, filename):
+    async def start_AVrecording(self, lien, filename):
         global video_thread
         global audio_thread
         self.filename = filename
         video_thread = VideoRecorder(lien, filename)
+        await asynckivy.sleep(0.2)
         try:
             int(self.lien)
             audio_thread = AudioRecorder(self.filename_audio, self.lien)
         except:
             audio_thread = AudioRecorder(self.filename_audio)
-        return video_thread.demarage(lien, filename)
 
-    def record_demarage(self, frames_to_record):
+        process = MyProcess(target_function=video_thread.demarage, args=(lien, filename))
+        self.listProces.append(process)
+        process.start()
+        process.join()
+        # return video_thread.demarage(lien, filename)
+
+    async def record_demarage(self, frames_to_record):
+        await asynckivy.sleep(0)
         if video_thread is not None:
             print("record_demarage True")
             video_thread.record_demarage(frames_to_record)
             audio_thread.start()
 
-    def enregistrer(self, frames_to_record):
+    async def enregistrer(self, frames_to_record):
+        await asynckivy.sleep(0.2)
         if video_thread is not None:
             print("video_thread stop")
             video_frame = video_thread.stop_record(frames_to_record)
-            self.stop()
+            asynckivy.start(self.stop())
             return video_frame
 
-    def update_enregistrer(self, frames_to_record):
+    async def update_enregistrer(self, frames_to_record):
+        await asynckivy.sleep(0.2)
         if video_thread is not None:
             print("video_thread update")
             return video_thread.update_record(frames_to_record)
 
-    def stop(self):
+    async def stop(self):
+        await asynckivy.sleep(0)
         video_thread.stop()
         audio_thread.stop()
         # self.stop_enregistrement()
 
-    def stop_enregistrement(self):
+    async def stop_enregistrement(self):
+        await asynckivy.sleep(0)
         local_path = os.getcwd()
         audio_thread.stop()
         frame_counts = video_thread.frame_counts
@@ -87,6 +102,7 @@ class Camera:
 
             # Makes sure the threads have finished
             while threading.active_count() > 1:
+                await asynckivy.sleep(0)
                 time.sleep(1)
 
             #    Merging audio and video signal
@@ -109,13 +125,14 @@ class Camera:
 
                 print("..")
 
-            self.file_manager(self.filename)
+            asynckivy.start(self.file_manager(self.filename))
 
         except Exception as e:
             print(str(e))
 
     # Required and wanted processing of final files
-    def file_manager(self, filename):
+    async def file_manager(self, filename):
+        await asynckivy.sleep(0)
 
         local_path = os.getcwd()
 
