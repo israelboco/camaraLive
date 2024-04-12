@@ -21,6 +21,7 @@ class Camera:
         self.filename_audio = None
         self.filename_video_2 = None
         self.filename_video_final = None
+        self.videoCamera = None
 
     async def afficheCamara(self, lien):
         print(lien)
@@ -34,7 +35,7 @@ class Camera:
         self.filename = datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
         self.filename_video = "{}.mp4".format(self.filename)
         self.filename_audio = "{}".format(self.filename)
-        return asynckivy.start(self.start_AVrecording(lien, self.filename_video))
+        asynckivy.start(self.start_AVrecording(lien, self.filename_video))
 
     async def start_AVrecording(self, lien, filename):
         global video_thread
@@ -49,12 +50,15 @@ class Camera:
             print(e)
             audio_thread = AudioRecorder(self.filename_audio)
         try:
-            process = MyProcess(target_function=video_thread.demarage, args=(lien, filename))
-            self.listProces.append(process)
-            process.run()
-            return video_thread.video_cap()
+            video_thread.demarage(lien, filename)
+            # process = MyProcess(target_function=video_thread.demarage, args=(lien, filename))
+            # self.listProces.append(process)
+            # process.run()
+            self.videoCamera = video_thread.video_cap
+            print('ok')
         except Exception as e:
-            print(e)
+            print(f"start_Av=======>  {e}")
+            self.videoCamera = None
             
 
     async def record_demarage(self, frames_to_record):

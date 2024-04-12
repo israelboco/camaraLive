@@ -53,7 +53,8 @@ class CamCapture:
 
     async def lancer(self):
         if self.videoCamera is None:
-            self.videoCamera = asynckivy.start(self.cameraVideo.afficheCamara(self.lien))
+            asynckivy.start(self.cameraVideo.afficheCamara(self.lien))
+            self.videoCamera = self.cameraVideo.videoCamera
 
         self.update()
         await asynckivy.sleep(0)

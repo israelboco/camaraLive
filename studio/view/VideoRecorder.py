@@ -20,7 +20,7 @@ class VideoRecorder:
         if video_writer:
             self.video_writer = video_writer
         # self.video_writer = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-        self.video_out = cv2.VideoWriter(self.video_filename, self.video_writer, self.fps, self.frameSize)
+        self.video_out = None # cv2.VideoWriter(self.video_filename, self.video_writer, self.fps, self.frameSize)
         self.frame_counts = 1
         self.start_time = time.time()
 
@@ -28,9 +28,10 @@ class VideoRecorder:
         self.device_index = lien
         self.video_filename = "enregistrement/" + filename
         try:
+            
             self.video_cap = cv2.VideoCapture(self.device_index)
         except Exception as e:
-            print(e)
+            print(f"demarage=====>>>> {e}")
             self.video_cap = None
         # return self.video_cap
 
@@ -41,7 +42,7 @@ class VideoRecorder:
             height, width, layers = frames_to_record[0].shape
             size = (width, height)
             print(self.video_filename)
-            self.out = cv2.VideoWriter(self.video_filename, self.video_writer, 16, size)
+            self.out = cv2.VideoWriter(self.video_filename, self.video_writer, self.fps, size)
 
     def stop_record(self, frames_to_record):
         # Enregistrer la liste d'images en vidéo

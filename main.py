@@ -107,6 +107,7 @@ class AppCameraLive(MDApp):
             self.screenMain.ids.spinner.active = False
     
     async def start_source(self, text):
+        await asynckivy.sleep(0.2)
         start_video = CamCapture(text, self.screenMain.ids.tt.image)
         lancer = await start_video.lancer()
         if lancer:
