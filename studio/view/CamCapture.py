@@ -11,12 +11,12 @@ from studio.view.MenuFrame import MenuBar
 
 
 class CamCapture:
-    def __init__(self, lien=None, image_video=None, tab=None, **kwargs):
+    def __init__(self, lien=None, screen_video=None, tab=None, **kwargs):
         super().__init__(**kwargs)
         self.tab = tab
         self.capture = 0
         self.lien = lien
-        self.image_video = image_video
+        self.screen_video = screen_video
         self.videoCamera = None
 
         self.cameraVideo = Camera()
@@ -52,18 +52,19 @@ class CamCapture:
         print("Star record: " + str(self.recording))
 
     async def lancer(self):
+        await asynckivy.sleep(0.8)
         if self.videoCamera is None:
-            asynckivy.start(self.cameraVideo.afficheCamara(self.lien))
-            self.videoCamera = self.cameraVideo.videoCamera
-
+            await self.cameraVideo.afficheCamara(self.lien)
+            await asynckivy.sleep(0.4)
+            self.videoCamera = self.cameraVideo.video_Camera
+        print(f"lancer====>>>> {self.videoCamera}")
         self.update()
-        await asynckivy.sleep(0)
-        
         return self.videoCamera
 
     def update(self, dt=None):
 
-        if self.videoCamera is not None:
+        if self.videoCamera:
+            print(f"update====>>>> {self.videoCamera}")
             # Lire une image depuis le flux vidéo
             ret, frame = self.videoCamera.read()
 
@@ -74,13 +75,13 @@ class CamCapture:
                 image_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
                 image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                 # display image from the texture
-                self.image_video.texture = image_texture
-                if self.capture >= 1:
+                self.screen_video.ids.cardImage.image.texture = image_texture
+                if self.capture > 0:
                     name = str(self.capture) + "_" + datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
                     self.save_frame_camera_key("enregistrement/capture", 'capture', name, frame)
                     self.capture += 1
                     print(self.capture)
-                if self.capture == 100:
+                if self.capture == 2:
                     self.capture = 0
 
                 # Enregistrer la frame si l'enregistrement est activé

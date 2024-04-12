@@ -1,21 +1,10 @@
-import os
-from datetime import datetime
-
-import PIL
-import cv2
-from PIL import Image, ImageTk
 from kivy.lang import Builder
-from kivy.uix.image import Image
-from kivy.clock import Clock
-from kivy.graphics.texture import Texture
 from kivymd.app import MDApp
 from kivymd.font_definitions import fonts
 from kivymd.uix.screen import MDScreen
 from kivymd.utils import asynckivy
 
 from studio.view.CamCapture import CamCapture
-# from apscheduler.schedulers.blocking import BlockingScheduler as Scheduler
-# from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from studio.view.CameraFrame import Camera
 from studio.view.CardAudio import CardAudio
 from studio.view.MenuFrame import MenuBar
@@ -39,19 +28,10 @@ class AppCameraLive(MDApp):
     def on_start(self):
         tab = Tab(id='1', title="CamLive 1")
         self.root.ids.tabs.add_widget(tab)
-        camlive = CamCapture(tab)
-        #process = MyProcess(target_function=camlive, args=())
-        # self.listProces.append(process)
-        # process.start()
-        # process.join()
+        CamCapture(tab)
 
     def on_stop(self):
         pass
-        # print(self.listProces)
-        # for proces in self.listProces:
-        #     proces.terminate()
-        #     pass
-        # print(self.listProces.clear())
 
     def add_tab(self):
         self.index += 1
@@ -63,11 +43,7 @@ class AppCameraLive(MDApp):
         self.root.ids.tabs.add_widget(
              tab
         )
-        camlive = CamCapture(tab)
-        # process = MyProcess(target_function=camlive, args=())
-        # self.listProces.append(process)
-        # process.start()
-        # process.join()
+        CamCapture(tab)
 
     def remove_tab(self):
         if self.index > 1:
@@ -89,12 +65,6 @@ class AppCameraLive(MDApp):
             if instance_tab.tab_label_text == instance_tab_label.text:
                 instance_tabs.remove_widget(instance_tab_label)
                 self.index -= 1
-                # index = int(instance_tab.id) - 1
-                # self.listProces[index].terminate()
-                # print(self.listProces[index])
-                # self.listProces.remove(self.listProces[index])
-                # print(self.listProces)
-                # process.terminate()
                 break
 # .split('-')[1]
 
@@ -108,10 +78,10 @@ class AppCameraLive(MDApp):
     
     async def start_source(self, text):
         await asynckivy.sleep(0.2)
-        start_video = CamCapture(text, self.screenMain.ids.tt.image)
+        start_video = CamCapture(text, self.screenMain)
         lancer = await start_video.lancer()
         if lancer:
-            print(lancer)
+            print(f"start_source====>>>> {lancer}")
         self.screenMain.ids.spinner.active = False
 
 

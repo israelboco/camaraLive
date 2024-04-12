@@ -12,6 +12,7 @@ from kivymd.utils import asynckivy
 
 class Camera:
     listProces = []
+    video_Camera = None
 
     def __int__(self, lien=None):
         self.lien = lien
@@ -21,7 +22,6 @@ class Camera:
         self.filename_audio = None
         self.filename_video_2 = None
         self.filename_video_final = None
-        self.videoCamera = None
 
     async def afficheCamara(self, lien):
         print(lien)
@@ -31,7 +31,7 @@ class Camera:
         else:
             self.lien = lien
             lien = lien + "/video"
-        await asynckivy.sleep(0.3)
+        await asynckivy.sleep(0)
         self.filename = datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
         self.filename_video = "{}.mp4".format(self.filename)
         self.filename_audio = "{}".format(self.filename)
@@ -42,7 +42,7 @@ class Camera:
         global audio_thread
         self.filename = filename
         video_thread = VideoRecorder(lien, filename)
-        await asynckivy.sleep(0.2)
+        await asynckivy.sleep(0)
         try:
             int(self.lien)
             audio_thread = AudioRecorder(self.filename_audio, self.lien)
@@ -54,15 +54,16 @@ class Camera:
             # process = MyProcess(target_function=video_thread.demarage, args=(lien, filename))
             # self.listProces.append(process)
             # process.run()
-            self.videoCamera = video_thread.video_cap
-            print('ok')
+            self.video_Camera = video_thread.video_cap
+            await asynckivy.sleep(0)
+            print(f"start_Av=======>  {self.video_Camera}")
         except Exception as e:
             print(f"start_Av=======>  {e}")
-            self.videoCamera = None
+            self.video_Camera = None
             
 
     async def record_demarage(self, frames_to_record):
-        await asynckivy.sleep(0)
+        await asynckivy.sleep(0.2)
         if video_thread is not None:
             print("record_demarage True")
             video_thread.record_demarage(frames_to_record)
