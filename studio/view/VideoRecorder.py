@@ -1,6 +1,8 @@
 import cv2
 import time
 
+from studio.view.MyProcess import MyProcess
+
 
 class VideoRecorder:
 
@@ -23,13 +25,17 @@ class VideoRecorder:
         self.video_out = None # cv2.VideoWriter(self.video_filename, self.video_writer, self.fps, self.frameSize)
         self.frame_counts = 1
         self.start_time = time.time()
+    
+    def start(self):
+        self.video_cap = cv2.VideoCapture(self.device_index)
 
     def demarage(self, lien, filename):
         self.device_index = lien
         self.video_filename = "enregistrement/" + filename
         try:
-            
-            self.video_cap = cv2.VideoCapture(self.device_index)
+            process = MyProcess(target_function=self.start, args=())
+            # self.listProces.append(process)
+            process.run()
         except Exception as e:
             print(f"demarage=====>>>> {e}")
             self.video_cap = None
@@ -64,7 +70,6 @@ class VideoRecorder:
             return []
 
     def stop(self):
-
         if self.open:
             self.open = False
             self.video_out.release()
