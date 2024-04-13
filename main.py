@@ -1,3 +1,4 @@
+import kivymd
 from kivy.lang import Builder
 from kivymd.app import MDApp
 from kivymd.font_definitions import fonts
@@ -13,16 +14,20 @@ from studio.view.ScreenMain import ScreenMain
 from studio.view.Tabs import Tab
 from kivymd.icon_definitions import md_icons
 
-Builder.load_file("studio/view/kv/main.kv")
+# Builder.load_file("studio/view/kv/main.kv")
 
 
 class AppCameraLive(MDApp):
     index = 1
     listProces = []
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.load_all_kv_files(self.directory)
+        self.screenMain = ScreenMain()
+
     def build(self) -> MDScreen:
         self.title = "Camera Live"
-        self.screenMain = ScreenMain()
         return self.screenMain
 
     def on_start(self):

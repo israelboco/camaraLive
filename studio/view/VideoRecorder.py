@@ -33,9 +33,10 @@ class VideoRecorder:
         self.device_index = lien
         self.video_filename = "enregistrement/" + filename
         try:
-            process = MyProcess(target_function=self.start, args=())
-            # self.listProces.append(process)
-            process.run()
+            # process = MyProcess(target_function=self.start, args=())
+            # # self.listProces.append(process)
+            # process.run()
+            self.start()
         except Exception as e:
             print(f"demarage=====>>>> {e}")
             self.video_cap = None
