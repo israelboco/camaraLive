@@ -67,7 +67,6 @@ class CamCapture:
             print(f"update====>>>> {self.videoCamera}")
             # Lire une image depuis le flux vidéo
             ret, frame = self.videoCamera.read()
-
             # Appeler récursivement la fonction update après un certain délai
             if ret:
                 buf1 = cv2.flip(frame, 0)
@@ -90,7 +89,7 @@ class CamCapture:
                     if not self.record_demarage:
                         self.record_demarage = not self.record_demarage
                         self.cameraVideo.record_demarage(self.frames_to_record)
-                        asynckivy.start(self.record_update())
+                        self.record_update()
 
             # Appeler récursivement la fonction update après un certain délai
             # await self.afert(16, self.update())
@@ -98,14 +97,13 @@ class CamCapture:
             time = 1 / 30
             self.afert(time, self.update)
 
-    async def record_update(self, dt=None):
+    def record_update(self, dt=None):
         if self.recording and self.frames_to_record:
-            await asynckivy.sleep(0)
             self.frames_to_record = self.cameraVideo.update_enregistrer(self.frames_to_record)
-            self.afert(10, asynckivy.start(self.record_update))
+            self.afert(10, self.record_update)
             # self.window.after(15000, self.record_update)
 
-        asynckivy.start(self.record_update())
+        # self.record_update()
 
     def stopCamera(self):
         self.recording = not self.recording

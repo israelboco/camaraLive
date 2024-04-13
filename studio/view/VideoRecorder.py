@@ -2,6 +2,7 @@ import cv2
 import time
 
 from studio.view.MyProcess import MyProcess
+from kivymd.utils import asynckivy
 
 
 class VideoRecorder:
@@ -26,17 +27,19 @@ class VideoRecorder:
         self.frame_counts = 1
         self.start_time = time.time()
     
-    def start(self):
+    async def start(self):
+        await asynckivy.sleep(0)
         self.video_cap = cv2.VideoCapture(self.device_index)
 
-    def demarage(self, lien, filename):
+    async def demarage(self, lien, filename):
         self.device_index = lien
         self.video_filename = "enregistrement/" + filename
+        await asynckivy.sleep(0)
         try:
             # process = MyProcess(target_function=self.start, args=())
             # # self.listProces.append(process)
             # process.run()
-            self.start()
+            await self.start()
         except Exception as e:
             print(f"demarage=====>>>> {e}")
             self.video_cap = None

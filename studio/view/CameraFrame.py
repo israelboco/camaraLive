@@ -50,12 +50,11 @@ class Camera:
             print(e)
             audio_thread = AudioRecorder(self.filename_audio)
         try:
-            video_thread.demarage(lien, filename)
+            await video_thread.demarage(lien, filename)
             # process = MyProcess(target_function=video_thread.demarage, args=(lien, filename))
             # self.listProces.append(process)
             # process.run()
             self.video_Camera = video_thread.video_cap
-            await asynckivy.sleep(0)
             print(f"start_Av=======>  {self.video_Camera}")
         except Exception as e:
             print(f"start_Av=======>  {e}")

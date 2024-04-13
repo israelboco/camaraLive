@@ -20,6 +20,7 @@ from kivymd.icon_definitions import md_icons
 class AppCameraLive(MDApp):
     index = 1
     listProces = []
+    listCam = []
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
