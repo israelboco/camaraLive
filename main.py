@@ -93,4 +93,3 @@ class AppCameraLive(MDApp):
 
 app = AppCameraLive()
 app.run()
-
