@@ -31,7 +31,7 @@ class VideoRecorder:
         await asynckivy.sleep(0)
         self.video_cap = cv2.VideoCapture(self.device_index)
 
-    async def demarage(self, lien, filename):
+    async def demarage(self, lien, filename, cam=None):
         self.device_index = lien
         self.video_filename = "enregistrement/" + filename
         await asynckivy.sleep(0)
@@ -39,7 +39,10 @@ class VideoRecorder:
             # process = MyProcess(target_function=self.start, args=())
             # # self.listProces.append(process)
             # process.run()
-            await self.start()
+            if not cam:
+                await self.start()
+            else:
+                 self.video_cap = cam
         except Exception as e:
             print(f"demarage=====>>>> {e}")
             self.video_cap = None

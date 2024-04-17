@@ -51,15 +51,22 @@ class CamCapture:
         self.recording = True
         print("Star record: " + str(self.recording))
 
-    async def lancer(self):
+    async def lancer(self, cam=None):
         await asynckivy.sleep(0.8)
-        if self.videoCamera is None:
-            await self.cameraVideo.afficheCamara(self.lien)
+        if not cam:
+            if self.videoCamera is None:
+                await self.cameraVideo.afficheCamara(self.lien)
+                await asynckivy.sleep(0.4)
+                self.videoCamera = self.cameraVideo.video_Camera
+            print(f"lancer====>>>> {self.videoCamera}")
+            self.update()
+            return self.videoCamera
+        else:
+            await self.cameraVideo.afficheCamara(self.lien, cam)
             await asynckivy.sleep(0.4)
-            self.videoCamera = self.cameraVideo.video_Camera
-        print(f"lancer====>>>> {self.videoCamera}")
-        self.update()
-        return self.videoCamera
+            print(f"lancer====>>>> {cam}")
+            self.update()
+            return cam
 
     def update(self, dt=None):
 

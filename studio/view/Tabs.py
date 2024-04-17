@@ -17,9 +17,15 @@ class Tab(MDFloatLayout, MDTabsBase):
             self.ids.spinner.active = False
     
     async def start_source(self, text):
-        await asynckivy.sleep(0.2)
-        start_video = CamCapture(text, self)
-        lancer = await start_video.lancer()
-        if lancer:
-           print(f"start_source====>>>> {lancer}")
+        if not self.app.listCam[text]:
+            await asynckivy.sleep(0.2)
+            start_video = CamCapture(text, self)
+            lancer = await start_video.lancer()
+            if lancer:
+                print(f"start_source====>>>> {lancer}")
+                self.app.listCam.append((text, lancer))
+        else:
+            await asynckivy.sleep(0.2)
+            start_video = CamCapture(text, self)
+            lancer = await start_video.lancer(self.app.listCam[text])
         self.ids.spinner.active = False

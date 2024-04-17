@@ -23,21 +23,28 @@ class Camera:
         self.filename_video_2 = None
         self.filename_video_final = None
 
-    async def afficheCamara(self, lien):
-        print(lien)
-        if len(lien) == 1 and lien == "0":
-            self.lien = int(lien)
-            lien = int(lien)
+    async def afficheCamara(self, lien, cam=None):
+        if not cam:
+            print(lien)
+            if len(lien) == 1 and lien == "0":
+                self.lien = int(lien)
+                lien = int(lien)
+            else:
+                self.lien = lien
+                lien = lien + "/video"
+            await asynckivy.sleep(0)
+            self.filename = datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
+            self.filename_video = "{}.mp4".format(self.filename)
+            self.filename_audio = "{}".format(self.filename)
+            asynckivy.start(self.start_AVrecording(lien, self.filename_video))
         else:
-            self.lien = lien
-            lien = lien + "/video"
-        await asynckivy.sleep(0)
-        self.filename = datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
-        self.filename_video = "{}.mp4".format(self.filename)
-        self.filename_audio = "{}".format(self.filename)
-        asynckivy.start(self.start_AVrecording(lien, self.filename_video))
+            await asynckivy.sleep(0)
+            self.filename = datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
+            self.filename_video = "{}.mp4".format(self.filename)
+            self.filename_audio = "{}".format(self.filename)
+            asynckivy.start(self.start_AVrecording(lien, self.filename_video, cam))
 
-    async def start_AVrecording(self, lien, filename):
+    async def start_AVrecording(self, lien, filename, cam=None):
         global video_thread
         global audio_thread
         self.filename = filename
@@ -50,7 +57,10 @@ class Camera:
             print(e)
             audio_thread = AudioRecorder(self.filename_audio)
         try:
-            await video_thread.demarage(lien, filename)
+            if not cam:
+                await video_thread.demarage(lien, filename)
+            else:
+                await video_thread.demarage(lien, filename, cam)
             # process = MyProcess(target_function=video_thread.demarage, args=(lien, filename))
             # self.listProces.append(process)
             # process.run()
