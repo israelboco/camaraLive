@@ -31,7 +31,7 @@ class VideoRecorder:
         await asynckivy.sleep(0)
         self.video_cap = cv2.VideoCapture(self.device_index)
 
-    async def demarage(self, lien, filename, cam=None):
+    async def demarage(self, lien=None, filename=None, cam=None):
         self.device_index = lien
         self.video_filename = "enregistrement/" + filename
         await asynckivy.sleep(0)

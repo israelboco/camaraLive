@@ -13,36 +13,57 @@
             padding: "10dp"
 
             MDBoxLayout:
-                orientation: "horizontal"
+                orientation: "vertical"
                 md_bg_color: "#676767"
                 adaptive_height: True
                 padding: "10dp"
                 spacing: "5dp"
                 pos_hint: {"center_y": .96}
+                size_hint_y: .17
 
-                MDSpinner:  
-                    id: spinner
-                    size_hint: None, None
-                    size: dp(20), dp(20)
-                    pos_hint: {'center_x': .5, 'center_y': .5}
-                    active: False
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    adaptive_height: True
+                    spacing: "5dp"
 
-                MDTextField:
-                    id: lien
-                    hint_text: "source"
-                    mode: 'rectangle'
-                    on_text: app.on_text()
+                    MDSpinner:  
+                        id: spinner
+                        size_hint: None, None
+                        size: dp(20), dp(20)
+                        pos_hint: {'center_x': .5, 'center_y': .5}
+                        active: False
 
-                MDIconButton:
-                    icon: "menu"
+                    MDTextField:
+                        id: lien
+                        hint_text: "source"
+                        mode: 'rectangle'
+                        # on_text: app.on_text()
+                    
+                    MDIconButton:
+                        icon: "magnify"
+                        size: dp(10), dp(10)
+                        on_release: app.on_text()
 
-                MDIconButton:
-                    icon: 'content-save'
-                    style: "tonal"
-                    theme_bg_color: "Custom"
-                    md_bg_color: "#7dff9e"
-                    theme_icon_color: "Custom"
-                    icon_color: "green"
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    md_bg_color: "#676767"
+                
+                    MDIconButton:
+                        icon: "menu"
+                        size: dp(10), dp(10)
+                    
+                    MDIconButton:
+                        icon: "shape"
+                        size: dp(10), dp(10)
+
+                    MDIconButton:
+                        icon: 'content-save'
+                        style: "tonal"
+                        theme_bg_color: "Custom"
+                        md_bg_color: "#7dff9e"
+                        theme_icon_color: "Custom"
+                        icon_color: "green"
+                        size: dp(10), dp(10)
 
             CardImage:
                 id: cardImage
@@ -180,11 +201,14 @@
                 id: source
                 hint_text: "source"
                 mode: 'rectangle'
-                on_text: root.on_text()
+                # on_text: root.on_text()
                 # phone_mask: "phone"
 
             MDIconButton:
-                icon: 'folder'
+                icon: 'magnify'
+                size: dp(10), dp(10)
+                on_release: root.on_text()
+
 
         MDBoxLayout:
             orientation: "horizontal"
@@ -193,12 +217,19 @@
 
             MDIconButton:
                 icon: "menu"
+                size: dp(10), dp(10)
 
             MDIconButton:
                 icon: 'content-save'
+                size: dp(10), dp(10)
 
             MDIconButton:
-                icon: "crop-landscape"
+                icon: "shape"
+                size: dp(10), dp(10)
+
+            MDIconButton:
+                icon: 'folder'
+                size: dp(10), dp(10)
 
 
     CardImage:

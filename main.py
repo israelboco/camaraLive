@@ -83,7 +83,13 @@ class AppCameraLive(MDApp):
             self.screenMain.ids.spinner.active = False
     
     async def start_source(self, text):
-        if not self.app.listCam[text]:
+        cam = None
+        for content in self.listCam:
+            print(content)
+            listText, cam = content
+            if text == listText:
+                break
+        if not cam:
             await asynckivy.sleep(0.2)
             start_video = CamCapture(text, self.screenMain)
             lancer = await start_video.lancer()
@@ -92,8 +98,8 @@ class AppCameraLive(MDApp):
                 self.listCam.append((text, lancer))
         else:
             await asynckivy.sleep(0.2)
-            start_video = CamCapture(text, self)
-            lancer = await start_video.lancer(self.app.listCam[text])
+            start_video = CamCapture(text, self.screenMain)
+            lancer = await start_video.lancer(cam)
         self.screenMain.ids.spinner.active = False
 
 

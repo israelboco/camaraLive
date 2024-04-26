@@ -10,7 +10,7 @@ from studio.view.VideoRecorder import VideoRecorder
 from kivymd.utils import asynckivy
 
 
-class Camera:
+class Camera():
     listProces = []
     video_Camera = None
 
@@ -23,15 +23,15 @@ class Camera:
         self.filename_video_2 = None
         self.filename_video_final = None
 
-    async def afficheCamara(self, lien, cam=None):
+    async def afficheCamara(self, lien=None, cam=None):
+        print(lien)
+        if len(lien) == 1 and lien == "0":
+            self.lien = int(lien)
+            lien = int(lien)
+        else:
+            self.lien = lien
+            lien = lien + "/video"
         if not cam:
-            print(lien)
-            if len(lien) == 1 and lien == "0":
-                self.lien = int(lien)
-                lien = int(lien)
-            else:
-                self.lien = lien
-                lien = lien + "/video"
             await asynckivy.sleep(0)
             self.filename = datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
             self.filename_video = "{}.mp4".format(self.filename)
@@ -44,11 +44,11 @@ class Camera:
             self.filename_audio = "{}".format(self.filename)
             asynckivy.start(self.start_AVrecording(lien, self.filename_video, cam))
 
-    async def start_AVrecording(self, lien, filename, cam=None):
+    async def start_AVrecording(self, lien=None, filename=None, cam=None):
         global video_thread
         global audio_thread
         self.filename = filename
-        video_thread = VideoRecorder(lien, filename)
+        video_thread =  (lien, filename)
         await asynckivy.sleep(0)
         try:
             int(self.lien)

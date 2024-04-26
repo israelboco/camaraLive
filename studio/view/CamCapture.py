@@ -6,6 +6,7 @@ from kivy.clock import Clock
 from kivy.core.image import Texture
 from kivymd.utils import asynckivy
 
+from studio.view import AudioRecorder, VideoRecorder
 from studio.view.CameraFrame import Camera
 from studio.view.MenuFrame import MenuBar
 
@@ -56,14 +57,15 @@ class CamCapture:
         if not cam:
             if self.videoCamera is None:
                 await self.cameraVideo.afficheCamara(self.lien)
-                await asynckivy.sleep(0.4)
+                await asynckivy.sleep(1.5)
                 self.videoCamera = self.cameraVideo.video_Camera
             print(f"lancer====>>>> {self.videoCamera}")
             self.update()
             return self.videoCamera
         else:
             await self.cameraVideo.afficheCamara(self.lien, cam)
-            await asynckivy.sleep(0.4)
+            await asynckivy.sleep(0.6)
+            self.videoCamera = self.cameraVideo.video_Camera
             print(f"lancer====>>>> {cam}")
             self.update()
             return cam
@@ -71,7 +73,7 @@ class CamCapture:
     def update(self, dt=None):
 
         if self.videoCamera:
-            print(f"update====>>>> {self.videoCamera}")
+            # print(f"update====>>>> {self.videoCamera}")
             # Lire une image depuis le flux vidéo
             ret, frame = self.videoCamera.read()
             # Appeler récursivement la fonction update après un certain délai
