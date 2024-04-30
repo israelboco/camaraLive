@@ -3,8 +3,11 @@ from kivy.lang import Builder
 from kivymd.app import MDApp
 from kivymd.font_definitions import fonts
 from kivymd.uix.screen import MDScreen
+from kivy.uix.button import Button
+from kivy.uix.dropdown import DropDown
 from kivymd.utils import asynckivy
 
+from studio.enum.FormatEnum import FormatEnum
 from studio.view.CamCapture import CamCapture
 from studio.view.CameraFrame import Camera
 from studio.view.CardAudio import CardAudio
@@ -25,6 +28,7 @@ class AppCameraLive(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.load_all_kv_files(self.directory)
+        self.dropdown = DropDown()
         self.screenMain = ScreenMain()
 
     def build(self) -> MDScreen:
@@ -34,22 +38,24 @@ class AppCameraLive(MDApp):
     def on_start(self):
         tab = Tab(id='1', title="CamLive 1")
         self.root.ids.tabs.add_widget(tab)
-        CamCapture(tab)
+        self.affiche_format()
 
     def on_stop(self):
         pass
 
     def add_tab(self):
-        self.index += 1
-        name_tab = f"CamLive {self.index}"
-        tab = Tab(
-            id=str(self.index),
-            tab_label_text=f"[ref={name_tab}][font={fonts[-1]['fn_regular']}]{md_icons['close']}[/font][/ref]{name_tab}"
-        )
-        self.root.ids.tabs.add_widget(
-             tab
-        )
-        CamCapture(tab)
+        try:
+            self.index += 1
+            name_tab = f"CamLive {self.index}"
+            tab = Tab(
+                id=str(self.index),
+                tab_label_text=f"[ref={name_tab}][font={fonts[-1]['fn_regular']}]{md_icons['close']}[/font][/ref]{name_tab}"
+            )
+            self.root.ids.tabs.add_widget(
+                tab
+            )
+        except Exception as e:
+            print(e)
 
     def remove_tab(self):
         if self.index > 1:
@@ -74,7 +80,7 @@ class AppCameraLive(MDApp):
                 break
 # .split('-')[1]
 
-    def on_text(self):
+    def on_start_video(self):
         text = self.screenMain.ids.lien.text
         if text:
             self.screenMain.ids.spinner.active = True
@@ -101,6 +107,19 @@ class AppCameraLive(MDApp):
             start_video = CamCapture(text, self.screenMain)
             lancer = await start_video.lancer(cam)
         self.screenMain.ids.spinner.active = False
+    
+    def on_start_audio(self):
+        pass
+
+    def affiche_format(self):
+        for index in list(FormatEnum):
+
+            btn = Button(text=str(index.value), size_hint_y=None, height=44)
+            # btn.bind(on_release=lambda btn: self.dropdown.select(btn.text))
+            self.dropdown.add_widget(btn)
+    
+    def listDropdown(self):
+        self.dropdown.open(self.screenMain.ids.lien)
 
 
 app = AppCameraLive()

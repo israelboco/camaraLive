@@ -42,7 +42,7 @@
                     MDIconButton:
                         icon: "magnify"
                         size: dp(10), dp(10)
-                        on_release: app.on_text()
+                        on_release: app.on_start_video()
 
                 MDBoxLayout:
                     orientation: "horizontal"
@@ -53,8 +53,10 @@
                         size: dp(10), dp(10)
                     
                     MDIconButton:
+                        id: shape
                         icon: "shape"
                         size: dp(10), dp(10)
+                        on_release: app.listDropdown()
 
                     MDIconButton:
                         icon: 'content-save'
@@ -224,8 +226,10 @@
                 size: dp(10), dp(10)
 
             MDIconButton:
+                id: shape
                 icon: "shape"
                 size: dp(10), dp(10)
+                on_release: root.affiche_format()
 
             MDIconButton:
                 icon: 'folder'
