@@ -14,7 +14,7 @@ from studio.view.CardAudio import CardAudio
 from studio.view.MenuFrame import MenuBar
 from studio.view.MyProcess import MyProcess
 from studio.view.ScreenMain import ScreenMain
-from studio.view.Tabs import Tab
+from studio.view.TabVideos import TabVideo
 from kivymd.icon_definitions import md_icons
 
 # Builder.load_file("studio/view/kv/main.kv")
@@ -36,8 +36,8 @@ class AppCameraLive(MDApp):
         return self.screenMain
 
     def on_start(self):
-        tab = Tab(id='1', title="CamLive 1")
-        self.root.ids.tabs.add_widget(tab)
+        tab = TabVideo(id='1', title="CamLive 1")
+        self.root.ids.tab_videos.add_widget(tab)
         self.affiche_format()
 
     def on_stop(self):
@@ -47,11 +47,11 @@ class AppCameraLive(MDApp):
         try:
             self.index += 1
             name_tab = f"CamLive {self.index}"
-            tab = Tab(
+            tab = TabVideo(
                 id=str(self.index),
                 tab_label_text=f"[ref={name_tab}][font={fonts[-1]['fn_regular']}]{md_icons['close']}[/font][/ref]{name_tab}"
             )
-            self.root.ids.tabs.add_widget(
+            self.root.ids.tab_videos.add_widget(
                 tab
             )
         except Exception as e:
@@ -60,13 +60,13 @@ class AppCameraLive(MDApp):
     def remove_tab(self):
         if self.index > 1:
             self.index -= 1
-        self.root.ids.tabs.remove_widget(
-            self.root.ids.tabs.get_tab_list()[-1]
+        self.root.ids.tab_videos.remove_widget(
+            self.root.ids.tab_videos.get_tab_list()[-1]
         )
 
     def on_ref_press(
             self,
-            instance_tabs,
+            instance_tab_videos,
             instance_tab_label,
             instance_tab,
             instance_tab_bar,
@@ -75,7 +75,7 @@ class AppCameraLive(MDApp):
         # Removes a tab by clicking on the close icon on the left.
         for instance_tab in instance_carousel.slides:
             if instance_tab.tab_label_text == instance_tab_label.text:
-                instance_tabs.remove_widget(instance_tab_label)
+                instance_tab_videos.remove_widget(instance_tab_label)
                 self.index -= 1
                 break
 # .split('-')[1]

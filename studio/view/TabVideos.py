@@ -8,7 +8,7 @@ from studio.enum.FormatEnum import FormatEnum
 from studio.view.CamCapture import CamCapture
 
 
-class Tab(MDFloatLayout, MDTabsBase):
+class TabVideo(MDFloatLayout, MDTabsBase):
     '''Class implementing content for a tab.''' 
     dropdown = None
 
