@@ -7,6 +7,7 @@
         orientation: "horizontal"
 
         MDBoxLayout:
+            id: one_widget
             orientation: "vertical"
             md_bg_color: "#484848"
             spacing: "10dp"
@@ -36,57 +37,74 @@
                     MDTextField:
                         id: lien
                         hint_text: "source"
-                        mode: 'fill'
+                        icon_left: "magnify"
                         font_size: dp(10)
-                        md_bg_color: "#676767"
-                        normal_color: "#676767"
-                        color_active: "#676767"
-                        fill_color: "#676767"
-                        # round_color: "#676767"
-                        
-                        # size_hint: .5, .05
-                        # on_text: app.on_text()
+                        icon_left_color_normal: "#676767"
+                        icon_left_color_focus: "#4287f5"
+                        line_color_normal: "#4287f5"
+                        line_color_focus: "#676767"
                     
-                    MDIconButton:
+                    IconButtonAction:
                         icon: "magnify"
-                        icon_size: dp(9)
+                        icon_size: dp(20)
+                        style: "tonal"
+                        theme_bg_color: "Custom"
+                        theme_icon_color: "Custom"
+                        icon_color: "#4287f5"
+                        pos_hint: {"center_y": .5}
                         on_release: app.on_start_video()
 
                 MDBoxLayout:
                     orientation: "horizontal"
                     md_bg_color: "#676767"
                 
-                    MDIconButton:
+                    IconButtonAction:
                         icon: "menu"
-                        icon_size: dp(9)
+                        icon_size: dp(15)
+                        style: "tonal"
+                        theme_bg_color: "Custom"
+                        # md_bg_color: "#4287f5"
+                        theme_icon_color: "Custom"
+                        icon_color: "#4287f5"
                     
-                    MDIconButton:
+                    IconButtonAction:
                         id: shape
                         icon: "shape"
-                        icon_size: dp(9)
+                        icon_size: dp(15)
+                        style: "tonal"
+                        theme_bg_color: "Custom"
+                        # md_bg_color: "#4287f5"
+                        theme_icon_color: "Custom"
+                        icon_color: "#4287f5"
                         on_release: app.listDropdown()
+                    
+                    MDLabel:
+                        id: label_format
+                        text: "format"
+                        adaptive_height: True
+                        font_size: dp(15)
+                        size_hint_x: None
+                        width: dp(80)
+                        halign: 'center'
+                        pos_hint: {'center_y': .33}
 
-                    MDIconButton:
+                    IconButtonAction:
                         icon: 'content-save'
                         style: "tonal"
                         theme_bg_color: "Custom"
-                        md_bg_color: "#7dff9e"
+                        # md_bg_color: "#4287f5"
                         theme_icon_color: "Custom"
-                        icon_color: "green"
-                        icon_size: dp(9)
+                        icon_color: "#4287f5"
+                        icon_size: dp(15)
 
             CardImage:
                 id: cardImage
                 pos_hint: {"center_x": .5, "center_y": .5}
                 size_hint: .9, .5
 
-            CardAudio:
-                md_bg_color: "#676767"
-                pos_hint: {"center_x": .5, "center_y": .12}
-                size_hint_y: .07
-
 
         MDBoxLayout:
+            id: two_widget
             orientation: 'vertical'
             md_bg_color: "#484848"
             padding: dp(10)
@@ -96,22 +114,11 @@
                 md_bg_color: "#484848"
                 padding: dp(10)
                 spacing: dp(10)
-                size_hint_y: .8
+                size_hint_y: .5
 
                 MDTabs:
                     id: tab_videos
                     on_ref_press: app.on_ref_press(*args)
-            
-            MDBoxLayout:
-                md_bg_color: "#484848"
-                padding: dp(10)
-                spacing: dp(10)
-                size_hint_y: .2
-
-                MDTabs:
-                    id: tab_audios
-                    on_ref_press: app.on_ref_press(*args)
-
 
 <CardImage>:
     md_bg_color: "#676767" #ffffff
@@ -136,65 +143,84 @@
             md_bg_color: "#676767"
             radius: 24
 
-            MDIconButton:
+            IconButtonAction:
                 icon: "play"
                 size_hint_x: .1
+                icon_size: dp(15)
                 pos_hint:{"center_y": .5}
+                style: "tonal"
+                theme_bg_color: "Custom"
+                # md_bg_color: "#4287f5"
+                theme_icon_color: "Custom"
+                icon_color: "#4287f5"
 
-            MDIconButton:
+            IconButtonAction:
                 icon: "stop"
                 size_hint_x: .1
+                icon_size: dp(15)
                 pos_hint:{"center_y": .5}
-
-            MDSlider:
-                size_hint_x: .6
-                pos_hint:{"center_y": .5}
-                hint: True
+                style: "tonal"
+                theme_bg_color: "Custom"
+                theme_icon_color: "Custom"
+                icon_color: "#4287f5"
+            
+            IconButtonAction:
+                icon: "video-outline"
+                adaptive_height: True
+                size_hint_x: .1
+                icon_size: dp(15)
+                pos_hint:{"center_x": 0.7, "center_y": .5}
+                style: "tonal"
+                theme_bg_color: "Custom"
+                theme_icon_color: "Custom"
+                icon_color: "#4287f5"
 
             MDLabel:
-                text: "00:00"
+                text: "00:00:00"
                 size_hint_x: .2
                 pos_hint:{"center_y": .5}
+                font_size: dp(12)
 
 
 <CardAudio>
-    #lien: lien
+
     MDBoxLayout:
         orientation: "vertical"
+        adaptive_width: True
 
-        MDLabel:
-            adaptive_height: True
-            halign: "center"
-            text: "Piste Audio"
-            font_size: "15sp"
+        MDRelativeLayout:
 
-        MDBoxLayout:
-            orientation: "horizontal"
-            # md_bg_color: "#262626"
-            radius: 24
-
-            MDIconButton:
-                icon: "play"
+            IconButtonAction:
+                id: microphone
+                icon: "microphone"
                 adaptive_height: True
-                size_hint: .1, .4
-                pos_hint:{"center_y": .5}
-
-            MDIconButton:
-                icon: "stop"
+                size_hint_x: .1
+                icon_size: dp(30)
+                pos_hint:{"center_x": .5, "center_y": .9}
+                style: "tonal"
+                theme_bg_color: "Custom"
+                theme_icon_color: "Custom"
+                icon_color: "#4287f5"
+                adaptive_width: True
+            
+            IconButtonAction:
+                icon: "microphone-outline"
                 adaptive_height: True
-                size_hint: .1, .4
-                pos_hint:{"center_y": .5}
-
-            MDSlider:
-                size_hint_x: .6
-                pos_hint:{"center_y": .5}
-                hint: True
+                size_hint_x: .1
+                icon_size: dp(10)
+                pos_hint:{"center_x": .5, "center_y": .4}
+                style: "tonal"
+                theme_bg_color: "Custom"
+                theme_icon_color: "Custom"
+                icon_color: "#4287f5"
+                adaptive_width: True
 
             MDLabel:
-                text: "00:00"
+                text: "00:00:00"
                 size_hint_x: .2
-                pos_hint:{"center_y": .5}
-                valign: "center"
+                pos_hint:{"center_x": .7, "center_y": .4}
+                adaptive_width: True
+                font_size: dp(12)
 
 
 <TabVideo>
@@ -212,8 +238,14 @@
             adaptive_height: True
             spacing: "5dp"
 
-            MDIconButton:
-                icon: "plus"
+            IconButtonAction:
+                icon: "video-plus-outline"
+                icon_size: dp(20)
+                style: "tonal"
+                theme_bg_color: "Custom"
+                # md_bg_color: "#4287f5"
+                theme_icon_color: "Custom"
+                icon_color: "#4287f5"
                 on_release:
                     app.add_tab()
 
@@ -227,15 +259,23 @@
             MDTextField:
                 id: source
                 hint_text: "source"
-                mode: 'fill'
+                icon_left: "magnify"
                 font_size: dp(10)
-                # size_hint: .5, .05
-                # on_text: root.on_text()
-                # phone_mask: "phone"
+                icon_size: dp(15)
+                icon_left_color_normal: "#676767"
+                icon_left_color_focus: "#4287f5"
+                line_color_normal: "#4287f5"
+                line_color_focus: "#676767"
+                background_color: "#ffffff"
 
-            MDIconButton:
+            IconButtonAction:
                 icon: 'magnify'
-                icon_size: dp(9)
+                icon_size: dp(20)
+                style: "tonal"
+                theme_bg_color: "Custom"
+                theme_icon_color: "Custom"
+                pos_hint: {"center_y": .5}
+                icon_color: "#4287f5"
                 on_release: root.on_text()
 
 
@@ -244,110 +284,56 @@
             adaptive_height: True
             spacing: "5dp"
 
-            MDIconButton:
-                icon: "menu"
-                icon_size: dp(9)
+            IconButtonAction:
+                icon: "video-switch-outline"
+                icon_size: dp(15)
+                style: "tonal"
+                theme_bg_color: "Custom"
+                # md_bg_color: "#4287f5"
+                theme_icon_color: "Custom"
+                icon_color: "#4287f5"
 
-            MDIconButton:
-                icon: 'content-save'
-                icon_size: dp(9)
+            IconButtonAction:
+                icon: 'video-outline'
+                icon_size: dp(15)
+                style: "tonal"
+                theme_bg_color: "Custom"
+                # md_bg_color: "#4287f5"
+                theme_icon_color: "Custom"
+                icon_color: "#4287f5"
 
-            MDIconButton:
+            IconButtonAction:
                 id: shape
                 icon: "shape"
-                icon_size: dp(9)
+                icon_size: dp(15)
+                style: "tonal"
+                theme_bg_color: "Custom"
+                # md_bg_color: "#4287f5"
+                theme_icon_color: "Custom"
+                icon_color: "#4287f5"
                 on_release: root.affiche_format()
+            
+            MDLabel:
+                id: label_format
+                text: "format"
+                adaptive_height: True
+                font_size: dp(15)
+                size_hint_x: None
+                width: dp(80)
+                halign: 'center'
+                pos_hint: {'center_y': .33}
 
-            MDIconButton:
+            IconButtonAction:
                 icon: 'folder'
-                icon_size: dp(9)
-
+                icon_size: dp(15)
+                style: "tonal"
+                theme_bg_color: "Custom"
+                # md_bg_color: "#4287f5"
+                theme_icon_color: "Custom"
+                icon_color: "#4287f5"
 
     CardImage:
         id: cardImage
         pos_hint: {"center_x": .5, "center_y": .5}
         size_hint: .7, .5
-
-    # CardAudio:
-    #     id: cardAudio
-    #     md_bg_color: "#676767"
-    #     pos_hint: {"center_x": .5, "center_y": .12}
-    #     size_hint_y: .1
-
-
-<TabAudio>
-    app: app
-    MDBoxLayout:
-        md_bg_color: "#676767"
-        orientation: "vertical"
-        adaptive_height: True
-        padding: "5dp"
-        size_hint_y: .15
-
-        MDBoxLayout:
-            orientation: "horizontal"
-            adaptive_height: True
-            pos_hint: {"center_y": .5}
-            spacing: "5dp"
-
-            MDIconButton:
-                icon: "plus"
-                on_release:
-                    app.add_tab()
-
-            MDSpinner:
-                id: spinner
-                size_hint: None, None
-                size: dp(20), dp(20)
-                pos_hint: {'center_x': .5, 'center_y': .5}
-                active: False
-
-            MDTextField:
-                id: source
-                hint_text: "source"
-                mode: 'round'
-                font_size: dp(10)
-                # size_hint: .5, .05
-                # on_text: root.on_text()
-                # phone_mask: "phone"
-
-            MDIconButton:
-                icon: 'magnify'
-                icon_size: dp(9)
-                on_release: root.on_text()
-
-
-        MDBoxLayout:
-            orientation: "horizontal"
-            adaptive_height: True
-            spacing: "5dp"
-
-            MDIconButton:
-                icon: "menu"
-                icon_size: dp(9)
-
-            MDIconButton:
-                icon: 'content-save'
-                icon_size: dp(9)
-
-            MDIconButton:
-                id: shape
-                icon: "shape"
-                icon_size: dp(9)
-                on_release: root.affiche_format()
-
-            MDIconButton:
-                icon: 'folder'
-                icon_size: dp(9)
-
-
-    # CardImage:
-    #     id: cardImage
-    #     pos_hint: {"center_x": .5, "center_y": .5}
-    #     size_hint: .7, .5
-
-    CardAudio:
-        id: cardAudio
-        md_bg_color: "#676767"
-        pos_hint: {"center_x": .5, "center_y": .12}
-        size_hint_y: .1
+        

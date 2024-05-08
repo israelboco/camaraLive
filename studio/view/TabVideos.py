@@ -53,7 +53,11 @@ class TabVideo(MDFloatLayout, MDTabsBase):
             for index in list(FormatEnum):
 
                 btn = Button(text=str(index.value), size_hint_y=None, height=44)
-                # btn.bind(on_release=lambda btn: self.dropdown.select(btn.text))
+                btn.bind(on_release=lambda btn: self.selectDropdown(btn.text))
                 self.dropdown.add_widget(btn)
-        self.dropdown.open(self.ids.source)
+        self.dropdown.open(self.ids.label_format)
+    
+    def selectDropdown(self, text):
+        self.dropdown.select(text)
+        self.ids.label_format.text = "format :" + str(text)
     

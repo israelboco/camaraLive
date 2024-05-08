@@ -4,9 +4,12 @@ from kivymd.app import MDApp
 from kivymd.font_definitions import fonts
 from kivymd.uix.screen import MDScreen
 from kivy.uix.button import Button
+from kivymd.uix.button import MDIconButton
 from kivy.uix.dropdown import DropDown
 from kivymd.utils import asynckivy
 
+from studio.controller.ExpansionPanel import ExpansionPanelVid, IconButtonAction
+from kivymd.uix.expansionpanel import MDExpansionPanel
 from studio.enum.FormatEnum import FormatEnum
 from studio.view.CamCapture import CamCapture
 from studio.view.CameraFrame import Camera
@@ -14,6 +17,7 @@ from studio.view.CardAudio import CardAudio
 from studio.view.MenuFrame import MenuBar
 from studio.view.MyProcess import MyProcess
 from studio.view.ScreenMain import ScreenMain
+from studio.view.TabAudios import TabAudio
 from studio.view.TabVideos import TabVideo
 from kivymd.icon_definitions import md_icons
 
@@ -39,6 +43,11 @@ class AppCameraLive(MDApp):
         tab = TabVideo(id='1', title="CamLive 1")
         self.root.ids.tab_videos.add_widget(tab)
         self.affiche_format()
+        expansion = ExpansionPanelVid()
+        expansion.start_expand_one()
+        expansion.start_expand_two()
+        self.screenMain.ids.one_widget.add_widget(expansion.expand_one)
+        self.screenMain.ids.two_widget.add_widget(expansion.expand_two)
 
     def on_stop(self):
         pass
@@ -49,7 +58,7 @@ class AppCameraLive(MDApp):
             name_tab = f"CamLive {self.index}"
             tab = TabVideo(
                 id=str(self.index),
-                tab_label_text=f"[ref={name_tab}][font={fonts[-1]['fn_regular']}]{md_icons['close']}[/font][/ref]{name_tab}"
+                tab_label_text=f"[ref={name_tab}][font={fonts[-1]['fn_regular']}]{md_icons['close']}[/font][/ref]{name_tab}",
             )
             self.root.ids.tab_videos.add_widget(
                 tab
@@ -78,7 +87,6 @@ class AppCameraLive(MDApp):
                 instance_tab_videos.remove_widget(instance_tab_label)
                 self.index -= 1
                 break
-# .split('-')[1]
 
     def on_start_video(self):
         text = self.screenMain.ids.lien.text
@@ -115,11 +123,23 @@ class AppCameraLive(MDApp):
         for index in list(FormatEnum):
 
             btn = Button(text=str(index.value), size_hint_y=None, height=44)
-            # btn.bind(on_release=lambda btn: self.dropdown.select(btn.text))
+            btn.bind(on_release=lambda btn: self.selectDropdown(btn.text))
             self.dropdown.add_widget(btn)
     
     def listDropdown(self):
-        self.dropdown.open(self.screenMain.ids.lien)
+        self.dropdown.open(self.screenMain.ids.label_format)
+    
+    def selectDropdown(self, text):
+        self.dropdown.select(text)
+        self.screenMain.ids.label_format.text = "format :" + str(text)
+
+    # def tap_expansion_chevron(
+    #     self, panel: MDExpansionPanel, chevron: MDIconButton
+    # ):
+    #     panel.open() if not panel.is_open else panel.close()
+    #     panel.set_chevron_down(
+    #         chevron
+    #     ) if not panel.is_open else panel.set_chevron_up(chevron)
 
 
 app = AppCameraLive()
