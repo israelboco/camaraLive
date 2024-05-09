@@ -29,7 +29,7 @@ class ExpansionPanelVid:
 
     def start_expand_one(self):
         self.expand_one = MDExpansionPanel(
-            icon="chevron-circle-up-outline",
+            icon="studio\\asset\holo.png",
             content=ContentExpandOne(),  # content of panel
             panel_cls=MDExpansionPanelTwoLine(  # content of header
                 text="Connect to an online network",
@@ -39,7 +39,7 @@ class ExpansionPanelVid:
     
     def start_expand_two(self):
         self.expand_two = MDExpansionPanel(
-            icon="chevron-circle-up-outline",
+            icon="studio\\asset\holo.png",
             content=ContentExpandTwo(),  # content of panel
             panel_cls=MDExpansionPanelOneLine(  # content of header
                 text="Audio Pist",
