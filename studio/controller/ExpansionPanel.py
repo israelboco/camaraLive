@@ -2,6 +2,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.behaviors.magic_behavior import MagicBehavior
 from kivymd.uix.behaviors import RotateBehavior
 from kivymd.uix.button import MDIconButton
+from kivy.uix.button import Button
 from kivymd.uix.behaviors.focus_behavior import FocusBehavior
 from kivymd.uix.expansionpanel import MDExpansionPanel, MDExpansionPanelOneLine, MDExpansionPanelTwoLine
 
@@ -53,3 +54,12 @@ class ContentExpandOne(MDBoxLayout):
 
 class ContentExpandTwo(MDBoxLayout):
     pass
+
+
+class FocusButton(FocusBehavior, Button):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.focus_color = "#DCE8F8"
+        self.unfocus_color = "#676767"
+        self.opposite_colors: True

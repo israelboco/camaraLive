@@ -8,7 +8,7 @@ from kivymd.uix.button import MDIconButton
 from kivy.uix.dropdown import DropDown
 from kivymd.utils import asynckivy
 
-from studio.controller.ExpansionPanel import ExpansionPanelVid, IconButtonAction
+from studio.controller.ExpansionPanel import ExpansionPanelVid, FocusButton, IconButtonAction
 from kivymd.uix.expansionpanel import MDExpansionPanel
 from studio.enum.FormatEnum import FormatEnum
 from studio.view.CamCapture import CamCapture
@@ -17,7 +17,6 @@ from studio.view.CardAudio import CardAudio
 from studio.view.MenuFrame import MenuBar
 from studio.view.MyProcess import MyProcess
 from studio.view.ScreenMain import ScreenMain
-from studio.view.TabAudios import TabAudio
 from studio.view.TabVideos import TabVideo
 from kivymd.icon_definitions import md_icons
 
@@ -81,7 +80,6 @@ class AppCameraLive(MDApp):
             instance_tab_bar,
             instance_carousel,
     ):
-        # Removes a tab by clicking on the close icon on the left.
         for instance_tab in instance_carousel.slides:
             if instance_tab.tab_label_text == instance_tab_label.text:
                 instance_tab_videos.remove_widget(instance_tab_label)
@@ -100,8 +98,9 @@ class AppCameraLive(MDApp):
         cam = None
         for content in self.listCam:
             print(content)
-            listText, cam = content
+            listText= content[0]
             if text == listText:
+                cam = content[1]
                 break
         if not cam:
             await asynckivy.sleep(0.2)
@@ -122,7 +121,7 @@ class AppCameraLive(MDApp):
     def affiche_format(self):
         for index in list(FormatEnum):
 
-            btn = Button(text=str(index.value), size_hint_y=None, height=44)
+            btn = FocusButton(text=str(index.value), size_hint_y=None, height=44)
             btn.bind(on_release=lambda btn: self.selectDropdown(btn.text))
             self.dropdown.add_widget(btn)
     

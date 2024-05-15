@@ -4,6 +4,7 @@ from kivymd.uix.tab import MDTabsBase
 from kivy.uix.button import Button
 from kivy.uix.dropdown import DropDown
 from kivymd.utils import asynckivy
+from studio.controller.ExpansionPanel import FocusButton
 from studio.enum.FormatEnum import FormatEnum
 from studio.view.CamCapture import CamCapture
 
@@ -28,8 +29,9 @@ class TabVideo(MDFloatLayout, MDTabsBase):
         cam = None
         for content in self.app.listCam:
             print(content)
-            listText, cam = content
+            listText= content[0]
             if text == listText:
+                cam = content[1]
                 break
         if not cam:
             await asynckivy.sleep(0.2)
@@ -52,7 +54,7 @@ class TabVideo(MDFloatLayout, MDTabsBase):
             self.dropdown = DropDown()
             for index in list(FormatEnum):
 
-                btn = Button(text=str(index.value), size_hint_y=None, height=44)
+                btn = FocusButton(text=str(index.value), size_hint_y=None, height=44)
                 btn.bind(on_release=lambda btn: self.selectDropdown(btn.text))
                 self.dropdown.add_widget(btn)
         self.dropdown.open(self.ids.label_format)

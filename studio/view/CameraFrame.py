@@ -36,22 +36,22 @@ class Camera():
             self.filename = datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
             self.filename_video = "{}.mp4".format(self.filename)
             self.filename_audio = "{}".format(self.filename)
-            asynckivy.start(self.start_AVrecording(lien, self.filename_video))
+            await self.start_AVrecording(lien, self.filename_video)
         else:
             await asynckivy.sleep(0)
             self.filename = datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
             self.filename_video = "{}.mp4".format(self.filename)
             self.filename_audio = "{}".format(self.filename)
-            asynckivy.start(self.start_AVrecording(lien, self.filename_video, cam))
+            await self.start_AVrecording(lien, self.filename_video, cam)
 
     async def start_AVrecording(self, lien=None, filename=None, cam=None):
         global video_thread
         global audio_thread
         self.filename = filename
-        video_thread =  (lien, filename)
+        video_thread =  VideoRecorder(lien, filename)
         await asynckivy.sleep(0)
         try:
-            int(self.lien)
+            # int(self.lien)
             audio_thread = AudioRecorder(self.filename_audio, self.lien)
         except Exception as e:  # noqa: E722
             print(e)
@@ -83,7 +83,7 @@ class Camera():
         if video_thread is not None:
             print("video_thread stop")
             video_frame = video_thread.stop_record(frames_to_record)
-            asynckivy.start(self.stop())
+            await self.stop()
             return video_frame
 
     async def update_enregistrer(self, frames_to_record):
