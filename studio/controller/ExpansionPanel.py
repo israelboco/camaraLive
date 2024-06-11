@@ -1,4 +1,5 @@
 from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.card import MDCard
 from kivymd.uix.behaviors.magic_behavior import MagicBehavior
 from kivymd.uix.behaviors import RotateBehavior
 from kivymd.uix.button import MDIconButton
@@ -66,3 +67,6 @@ class FocusButton(FocusBehavior, Button):
         self.focus_color = "#DCE8F8"
         self.unfocus_color = "#676767"
         self.opposite_colors: True
+
+class CardScrollImage(MDCard):
+    pass

@@ -114,7 +114,7 @@
 
                     IconButtonAction:
                         id: save
-                        icon: 'content-save'
+                        icon: 'content-save-outline'
                         style: "tonal"
                         theme_bg_color: "Custom"
                         theme_icon_color: "Custom"
@@ -134,18 +134,37 @@
             id: two_widget
             orientation: 'vertical'
             md_bg_color: "#484848"
-            padding: dp(10)
-            spacing: dp(10)
 
             MDBoxLayout:
+                id: box_video
                 md_bg_color: "#484848"
-                padding: dp(10)
-                spacing: dp(10)
-                size_hint_y: .5
+                # padding: dp(10)
+                # spacing: dp(10)
+                # size_hint_y: 1.5
 
-                MDTabs:
-                    id: tab_videos
-                    on_ref_press: app.on_ref_press(*args)
+                # MDTabs:
+                #     id: tab_videos
+                #     on_ref_press: app.on_ref_press(*args)
+                MDScrollView:
+
+                    MDGridLayout:
+                        padding: dp(10)
+                        spacing: dp(10)
+                        size_hint_y: 1.5
+                        cols: 2
+
+                        CardScrollImage:
+
+                        # CardScrollImage:
+
+                        # CardScrollImage:
+
+                        # CardScrollImage:
+
+                        # CardScrollImage:
+
+                        # CardScrollImage:
+
 
 
 <CardImage>:
@@ -197,8 +216,6 @@
                 theme_icon_color: "Custom"
                 icon_color: "#4287f5"
                 on_release:
-                    # if self.icon == 'play' root.camController.on_play() else root.camController.on_break()
-
 
             IconButtonAction:
                 id: play
@@ -226,20 +243,6 @@
                 on_release:
                     root.camController.on_stop()
 
-            
-            # IconButtonAction:
-            #     icon: "video-outline"
-            #     adaptive_height: True
-            #     size_hint_x: .1
-            #     icon_size: dp(15)
-            #     pos_hint:{"center_x": 0.7, "center_y": .5}
-            #     style: "tonal"
-            #     theme_bg_color: "Custom"
-            #     theme_icon_color: "Custom"
-            #     icon_color: "#4287f5"
-            #     on_release:
-            #         root.camController.on_record()
-
             MDLabel:
                 id: lecture
                 text: "[color=#ffffff]00:00:00[/color]"
@@ -247,6 +250,7 @@
                 pos_hint:{"center_y": .5}
                 font_size: dp(12)
                 markup: True
+
 
 
 <TabVideo>

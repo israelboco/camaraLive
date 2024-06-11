@@ -44,7 +44,7 @@ class AppCameraLive(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.load_all_kv_files(self.directory)
-        # self.dropdown = MDDropdownMenu()
+        self.dropdown = MDDropdownMenu()
         self.main_view = MainScreenView()
         self.getnetworks = GetNetworks()
         self.notificationService = NotificationService()
@@ -55,8 +55,8 @@ class AppCameraLive(MDApp):
         return self.main_view
 
     def on_start(self):
-        tab = TabVideo(id='1', title="CamLive 1")
-        self.screenMain.ids.tab_videos.add_widget(tab)
+        # tab = TabVideo(id='1', title="CamLive 1")
+        # self.screenMain.ids.tab_videos.add_widget(tab)
         self.affiche_format()
         self.affiche_camera()
         self.affiche_audio()
