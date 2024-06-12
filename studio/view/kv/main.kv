@@ -123,7 +123,7 @@
                         on_release:
                             app.camController.on_record()
 
-            CardImage:
+            CardViewImage:
                 id: cardImage
                 camController: app.camController
                 pos_hint: {"center_x": .5, "center_y": .5}
@@ -168,89 +168,89 @@
 
 
 
-# <CardImage>:
-#     md_bg_color: "#676767" #ffffff
-#     padding: "10dp"
-#     spacing: "5dp"
-#     radius: 24
-    # image: image
-    # lecture: lecture
+<CardViewImage>:
+    md_bg_color: "#676767" #ffffff
+    padding: "10dp"
+    spacing: "5dp"
+    radius: 24
+    image: image
+    lecture: lecture
 
-    # MDBoxLayout:
-    #     md_bg_color: "#676767"
-    #     orientation: "vertical"
+    MDBoxLayout:
+        md_bg_color: "#676767"
+        orientation: "vertical"
 
-        # MDRelativeLayout:
-        #     size_hint_y: None
-        #     height: dp(10)
+        MDRelativeLayout:
+            size_hint_y: None
+            height: dp(10)
 
-            # MDCard:
-            #     id: bage_image
-            #     md_bg_color: "#fff000"
-            #     size_hint: None, None
-            #     width: dp(10)
-            #     height: dp(10)
-            #     radius: 24
-            #     pos_hint:{"center_x": .94, "center_y": .5}
+            MDCard:
+                id: bage_image
+                md_bg_color: "#fff000"
+                size_hint: None, None
+                width: dp(10)
+                height: dp(10)
+                radius: 24
+                pos_hint:{"center_x": .94, "center_y": .5}
 
-        # Image:
-        #     id: image
-        #     source: "studio\\asset\\texture_image.jpg"
-        #     size_hint: None, None
-        #     width: root.width - dp(50)
-        #     height: root.height - dp(75)
-        #     pos_hint: {"center_x": .5, "center_y": .5}
+        Image:
+            id: image
+            source: "studio\\asset\\texture_image.jpg"
+            size_hint: None, None
+            width: root.width - dp(50)
+            height: root.height - dp(75)
+            pos_hint: {"center_x": .5, "center_y": .5}
 
-        # MDBoxLayout:
-        #     orientation: "horizontal"
-        #     md_bg_color: "#676767"
-        #     radius: 24
+        MDBoxLayout:
+            orientation: "horizontal"
+            md_bg_color: "#676767"
+            radius: 24
 
-            # IconButtonAction:
-            #     id: microphone
-            #     icon: "microphone-off"
-            #     size_hint_x: .1
-            #     icon_size: dp(15)
-            #     pos_hint:{"center_y": .5}
-            #     style: "tonal"
-            #     theme_bg_color: "Custom"
-            #     theme_icon_color: "Custom"
-            #     icon_color: "#4287f5"
-            #     on_release:
+            IconButtonAction:
+                id: microphone
+                icon: "microphone-off"
+                size_hint_x: .1
+                icon_size: dp(15)
+                pos_hint:{"center_y": .5}
+                style: "tonal"
+                theme_bg_color: "Custom"
+                theme_icon_color: "Custom"
+                icon_color: "#4287f5"
+                on_release:
 
-            # IconButtonAction:
-            #     id: play
-            #     icon: "play"
-            #     size_hint_x: .1
-            #     icon_size: dp(15)
-            #     pos_hint:{"center_y": .5}
-            #     style: "tonal"
-            #     theme_bg_color: "Custom"
-            #     theme_icon_color: "Custom"
-            #     icon_color: "#4287f5"
-            #     on_release:
-            #         asynckivy.start(root.camController.on_play()) if self.icon == 'play' else root.camController.on_break()
+            IconButtonAction:
+                id: play
+                icon: "play"
+                size_hint_x: .1
+                icon_size: dp(15)
+                pos_hint:{"center_y": .5}
+                style: "tonal"
+                theme_bg_color: "Custom"
+                theme_icon_color: "Custom"
+                icon_color: "#4287f5"
+                on_release:
+                    asynckivy.start(root.camController.on_play()) if self.icon == 'play' else root.camController.on_break()
 
-            # IconButtonAction:
-            #     id: stop
-            #     icon: "stop"
-            #     size_hint_x: .1
-            #     icon_size: dp(15)
-            #     pos_hint:{"center_y": .5}
-            #     style: "tonal"
-            #     theme_bg_color: "Custom"
-            #     theme_icon_color: "Custom"
-            #     icon_color: "#4287f5"
-            #     on_release:
-            #         root.camController.on_stop()
+            IconButtonAction:
+                id: stop
+                icon: "stop"
+                size_hint_x: .1
+                icon_size: dp(15)
+                pos_hint:{"center_y": .5}
+                style: "tonal"
+                theme_bg_color: "Custom"
+                theme_icon_color: "Custom"
+                icon_color: "#4287f5"
+                on_release:
+                    root.camController.on_stop()
 
-            # MDLabel:
-            #     id: lecture
-            #     text: "[color=#ffffff]00:00:00[/color]"
-            #     size_hint_x: .2
-            #     pos_hint:{"center_y": .5}
-            #     font_size: dp(12)
-            #     markup: True
+            MDLabel:
+                id: lecture
+                text: "[color=#ffffff]00:00:00[/color]"
+                size_hint_x: .2
+                pos_hint:{"center_y": .5}
+                font_size: dp(12)
+                markup: True
 
 
 
@@ -358,7 +358,7 @@
 #                 on_release:
 #                     root.camController.on_record()
 
-    # CardImage:
+    # CardViewImage:
     #     id: cardImage
     #     camController: root.camController
     #     pos_hint: {"center_x": .5, "center_y": .45}

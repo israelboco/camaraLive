@@ -26,7 +26,7 @@ class ScreenWelcome(MDScreen):
                         self.dialog.open()
 
 
-class CardImage(MDCard):
+class CardViewImage(MDCard):
         pass
 
 
