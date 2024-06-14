@@ -55,3 +55,81 @@
                             size: self.size
                             pos: self.pos
                             radius: [5]
+
+
+
+<AddCamBox>:
+    app: app
+    size_hint_y: None
+    height: dp(100)
+
+    MDBoxLayout:
+        orientation: "horizontal"
+
+        MDSpinner:  
+            id: spinner
+            size_hint: None, None
+            size: dp(20), dp(20)
+            pos_hint: {'center_y': .5}
+            active: False
+        
+        IconButtonAction:
+            id: list_camera
+            icon: "camera-outline"
+            icon_size: dp(20)
+            style: "tonal"
+            theme_bg_color: "Custom"
+            theme_icon_color: "Custom"
+            unfocus_color: '#262626'
+            icon_color: "#4287f5"
+            pos_hint: {"center_y": .5}
+            on_release: root.listcamera()
+
+        ClickableTextFieldRoundCam:
+            id: lien
+            pos_hint: {"center_y": .5}
+
+        MDRectangleFlatButton:
+            text: 'Ouvrir'
+            pos_hint: {'center_x': .4, 'center_y': .5}
+
+
+
+
+
+
+<ClickableTextFieldRoundCam>:
+    size_hint_y: None
+    height: text_field.height
+    padding: dp(10)
+    
+    MDTextField:
+
+        id: text_field
+        hint_text: root.hint_text
+        icon_left: "magnify"
+        font_size: dp(10)
+        icon_left_color_normal: "#676767"
+        icon_left_color_focus: "#4287f5"
+        line_color_normal: "#4287f5"
+        line_color_focus: "#4287f5"
+        text: root.text
+        helper_text_mode: "on_focus"    
+        size_hint_x: None
+        width: dp(250) 
+
+    IconButtonAction:
+        icon: "file-upload-outline"
+        icon_size: dp(20)
+        style: "tonal"
+        theme_bg_color: "Custom"
+        theme_icon_color: "Custom"
+        icon_color: "#4287f5"
+        unfocus_color: '#262626'
+        pos_hint: {"center_y": .5}
+        pos: text_field.width - self.width + dp(5), 0
+        theme_text_color: "Hint"
+        on_release: 
+            root.file_manager_open()
+            # asynckivy.start(app.on_start_video())
+

@@ -5,10 +5,18 @@ from kivymd.uix.screenmanager import MDScreenManager
 from kivymd.uix.card import MDCard
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.behaviors.focus_behavior import FocusBehavior
+from studio.Service.NotificationService import NotificationService
 
 
 class ScreenMain(MDScreen):
-        pass
+    notificationService = NotificationService()
+
+    def callWelcome(self):
+        self.main_view.transition.direction = "left"
+        self.main_view.current = "screen welcome"
+    
+    def dialog_box_cam(self):
+        self.notificationService.add_cam_box()
 
 class ScreenWelcome(MDScreen):
         dialog = None

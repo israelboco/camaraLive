@@ -6,6 +6,10 @@ from kivymd.uix.button import MDIconButton
 from kivy.uix.button import Button
 from kivymd.uix.behaviors.focus_behavior import FocusBehavior
 from kivymd.uix.expansionpanel import MDExpansionPanel, MDExpansionPanelOneLine, MDExpansionPanelTwoLine
+from kivy.properties import StringProperty
+from kivymd.uix.relativelayout import MDRelativeLayout
+from kivymd.uix.filemanager import MDFileManager
+from kivymd.uix.snackbar import Snackbar
 
 
 class IconButtonAction(FocusBehavior, MagicBehavior, RotateBehavior, MDIconButton):
@@ -70,3 +74,37 @@ class FocusButton(FocusBehavior, Button):
 
 class CardScrollImage(MDCard):
     pass
+
+
+class ClickableTextFieldRound(MDRelativeLayout):
+    text = StringProperty()
+    hint_text = StringProperty()
+
+
+class ClickableTextFieldRoundCam(MDRelativeLayout):
+    text = StringProperty()
+    hint_text = StringProperty()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.file_manager = MDFileManager(
+            exit_manager=self.exit_manager,
+            select_path=self.select_path,
+            preview=True
+        )
+
+    def file_manager_open(self):
+        self.file_manager.show('/')  # Ou spécifiez le chemin de départ
+        self.manager_open = True
+
+    def select_path(self, path):
+        self.exit_manager()
+        print(path)
+        # Snackbar(text=f"Selected: {path}").open()
+        # self.root.ids.video_player.source = path
+        # self.root.ids.video_player.state = 'play'
+
+    def exit_manager(self, *args):
+        self.manager_open = False
+        self.file_manager.close()

@@ -4,9 +4,6 @@ from kivymd.app import MDApp
 from kivymd.font_definitions import fonts
 from kivymd.uix.screen import MDScreen
 from kivy.uix.button import Button
-# from kivymd.uix.button import MDFlatButton
-# from kivymd.uix.button import MDIconButton
-# from kivy.uix.dropdown import DropDown
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.utils import asynckivy 
 from kivymd.toast import toast
@@ -24,7 +21,6 @@ from studio.view.CameraFrame import Camera
 from studio.view.CardAudio import CardAudio
 from studio.view.MyProcess import  MyProcess
 from studio.view.ScreenMain import MainScreenView, ScreenMain
-# from studio.view.TabVideos import TabVideo
 from kivymd.icon_definitions import md_icons
 
 
@@ -59,7 +55,7 @@ class AppCameraLive(MDApp):
         expansion = ExpansionPanelVid()
         expansion.start_expand_one()
         expansion.start_expand_two()
-        self.screenMain.ids.one_widget.add_widget(expansion.expand_one)
+        # self.screenMain.ids.one_widget.add_widget(expansion.expand_one)
         # self.screenMain.ids.two_widget.add_widget(expansion.expand_two)
 
     def on_stop(self):
@@ -184,6 +180,7 @@ class AppCameraLive(MDApp):
         self.dropdown2.open()
 
     # @staticmethod
+
     def selectDropdown(self, text):
         self.screenMain.ids.label_format.text = "[color=#4287f5]format :" + str(text.value) + "[/color]"
         self.camController.select_format(text.value)
@@ -201,7 +198,7 @@ class AppCameraLive(MDApp):
         # self.camController.start_source(text)
         if self.dropdown3:
             self.dropdown3.dismiss()
-    
+     
     def start_connect_live(self):
         if not self.camController.videoCamera:
             return toast("connectez vous a un camera")
