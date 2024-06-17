@@ -9,7 +9,7 @@ class GetNetworks:
         # Récupérer les informations de l'interface réseau
         networks.append({
             "interface": "WebCam",
-            "ip_address": 'addr.address',
+            "ip_address": 0,
             "netmask": 'addr.netmask',
             "broadcast": 'addr.broadcast'
         })

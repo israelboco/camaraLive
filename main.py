@@ -1,4 +1,4 @@
-import kivymd
+import kivymd 
 from kivy.lang import Builder
 from kivymd.app import MDApp 
 from kivymd.font_definitions import fonts
@@ -124,6 +124,8 @@ class AppCameraLive(MDApp):
                 cam = content[1]
                 break
         lancer = await self.camController.add_start_video(text, self.screenMain, cam)
+        if not lancer:
+            return
         if not self.connectLiveController:
             print("===============>>>>>>> connectLiveController")
             self.connectLiveController = ConnectLiveController(self.camController)
@@ -142,7 +144,7 @@ class AppCameraLive(MDApp):
             } for index in list(FormatEnum)
         ]
 
-        self.dropdown1 = MDDropdownMenu(items=self.menu_items_format, width_mult=4, caller=self.screenMain.ids.shape)
+        self.dropdown1 = MDDropdownMenu(md_bg_color="#bdc6b0",items=self.menu_items_format, width_mult=4, caller=self.screenMain.ids.shape)
 
     def listDropdown(self):
         print("listDropdown")
@@ -158,7 +160,7 @@ class AppCameraLive(MDApp):
             } for index in self.getnetworks.get_networks()
         ]
 
-        self.dropdown2 = MDDropdownMenu(items=self.menu_items_camera, width_mult=3, caller=self.screenMain.ids.list_camera)
+        self.dropdown2 = MDDropdownMenu(md_bg_color="#bdc6b0",items=self.menu_items_camera, width_mult=3, caller=self.screenMain.ids.list_camera)
 
 
     def affiche_audio(self):
@@ -171,7 +173,7 @@ class AppCameraLive(MDApp):
             } for index in range(0, self.index)
         ]
 
-        self.dropdown3 = MDDropdownMenu(items=self.menu_items_audio, width_mult=3, caller=self.screenMain.ids.microphone)
+        self.dropdown3 = MDDropdownMenu(md_bg_color="#bdc6b0",items=self.menu_items_audio, width_mult=3, caller=self.screenMain.ids.microphone)
 
     def listaudio(self):
         self.dropdown3.open()
@@ -179,7 +181,6 @@ class AppCameraLive(MDApp):
     def listcamera(self):
         self.dropdown2.open()
 
-    # @staticmethod
 
     def selectDropdown(self, text):
         self.screenMain.ids.label_format.text = "[color=#4287f5]format :" + str(text.value) + "[/color]"
@@ -188,8 +189,11 @@ class AppCameraLive(MDApp):
             self.dropdown1.dismiss()
     
     def selectDropdownNetwork(self, text):
-        self.screenMain.ids.lien.text = str(text["interface"])
-        # self.camController.start_source(text)
+        ip = text["ip_address"]
+        if ip == 0:
+            self.screenMain.ids.lien.text = str(f"{ip}")
+        else:
+            self.screenMain.ids.lien.text = str(f"https:/{ip}")
         if self.dropdown2:
             self.dropdown2.dismiss()
     
