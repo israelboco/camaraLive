@@ -81,17 +81,22 @@ class AddCamBox(MDBoxLayout):
             {
                 "viewclass": "OneLineListItem",
                 "text": str(index["interface"]),
+                "trailing_icon": str(index["trailing_icon"]),
                 "on_release": lambda x=index: self.selectDropdownNetwork(x),
             } for index in self.getnetworks.get_networks()
         ]
 
-        self.dropdown2 = MDDropdownMenu(items=self.menu_items_camera, width_mult=3, caller=self.ids.list_camera)
+        self.dropdown2 = MDDropdownMenu(md_bg_color="#bdc6b0",items=self.menu_items_camera, width_mult=3, caller=self.ids.list_camera)
 
     def listcamera(self):
         self.dropdown2.open()
     
     def selectDropdownNetwork(self, text):
-        self.ids.lien.text = str(text["interface"])
+        ip = text["ip_address"]
+        if ip == 0:
+            self.ids.lien.text = str(f"{ip}")
+        else:
+            self.ids.lien.text = str(f"https:/{ip}")
         self.ids.lien.on_focus = True
         if self.dropdown2:
             self.dropdown2.dismiss()

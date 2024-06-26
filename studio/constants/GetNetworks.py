@@ -11,7 +11,8 @@ class GetNetworks:
             "interface": "WebCam",
             "ip_address": 0,
             "netmask": 'addr.netmask',
-            "broadcast": 'addr.broadcast'
+            "broadcast": 'addr.broadcast',
+            "trailing_icon": 'webcam'
         })
         addrs = psutil.net_if_addrs()
         for interface_name, interface_addrs in addrs.items():
@@ -21,7 +22,8 @@ class GetNetworks:
                         "interface": interface_name,
                         "ip_address": addr.address,
                         "netmask": addr.netmask,
-                        "broadcast": addr.broadcast
+                        "broadcast": addr.broadcast,
+                        "trailing_icon": 'wifi'
                     })
         
         return networks

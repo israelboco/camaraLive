@@ -10,6 +10,7 @@ from kivy.properties import StringProperty
 from kivymd.uix.relativelayout import MDRelativeLayout
 from kivymd.uix.filemanager import MDFileManager
 from kivymd.uix.snackbar import Snackbar
+from tkinter import filedialog
 
 
 class IconButtonAction(FocusBehavior, MagicBehavior, RotateBehavior, MDIconButton):
@@ -95,8 +96,13 @@ class ClickableTextFieldRoundCam(MDRelativeLayout):
         )
 
     def file_manager_open(self):
-        self.file_manager.show('/')  # Ou spécifiez le chemin de départ
-        self.manager_open = True
+        # self.file_manager.show('/')  # Ou spécifiez le chemin de départ
+        # self.manager_open = True
+        self.ids.text_field.text = filedialog.askopenfilename( 
+            title="Ouvrir",
+            defaultextension=".mp4",
+            filetypes=(("Media files", "*.mp4"), ("All files", "*.*"))
+        )
 
     def select_path(self, path):
         self.exit_manager()

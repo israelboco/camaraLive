@@ -14,12 +14,12 @@ from studio.constants.GetNetworks import GetNetworks
 from studio.controller.ConnectLiveController import ConnectLiveController
 from studio.controller.CamController import CamController
 from studio.controller.ExpansionPanel import ExpansionPanelVid, FocusButton, IconButtonAction
-from kivymd.uix.expansionpanel import MDExpansionPanel 
+from kivymd.uix.expansionpanel import  MDExpansionPanel 
 from studio.enum.FormatEnum import FormatEnum
 from studio.view.CamCapture import CamCapture
 from studio.view.CameraFrame import Camera
 from studio.view.CardAudio import CardAudio
-from studio.view.MyProcess import  MyProcess
+from studio.view.MyProcess import MyProcess
 from studio.view.ScreenMain import MainScreenView, ScreenMain
 from kivymd.icon_definitions import md_icons
 
@@ -64,14 +64,15 @@ class AppCameraLive(MDApp):
     def add_tab(self):
         try:
             self.index += 1
-            # name_tab = f"CamLive {self.index}"
-            # # tab = TabVideo(
-            # #     id=str(self.index),
-            # #     tab_label_text=f"[ref={name_tab}][font={fonts[-1]["fn_regular"]}]{md_icons["close"]}[/font][/ref]{name_tab}",
-            # # )
+            name_tab = f"CamLive {self.index}"
+            # tab = TabVideo(
+            #     id=str(self.index),
+            #     tab_label_text=f"[ref={name_tab}][font={fonts[-1]["fn_regular"]}]{md_icons["close"]}[/font][/ref]{name_tab}",
+            # )
             # self.screenMain.ids.tab_videos.add_widget(
             #     tab
             # )
+            
         except Exception as e:
             print(e)
         self.affiche_audio()
@@ -156,6 +157,7 @@ class AppCameraLive(MDApp):
             {
                 "viewclass": "OneLineListItem",
                 "text": str(index["interface"]),
+                "trailing_icon": str(index["trailing_icon"]),
                 "on_release": lambda x=index: self.selectDropdownNetwork(x),
             } for index in self.getnetworks.get_networks()
         ]
@@ -194,6 +196,7 @@ class AppCameraLive(MDApp):
             self.screenMain.ids.lien.text = str(f"{ip}")
         else:
             self.screenMain.ids.lien.text = str(f"https:/{ip}")
+            self.screenMain.ids.lien.focus = True
         if self.dropdown2:
             self.dropdown2.dismiss()
     
