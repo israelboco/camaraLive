@@ -143,6 +143,7 @@
                             padding: dp(10)
                             spacing: dp(10)
                             size_hint_y: 1.5
+                            adaptive_height: True
                             cols: 2
 
                             CardScrollImage:
@@ -176,10 +177,11 @@
 
         Image:
             id: image
-            source: "studio\\asset\\texture_image.jpg"
+            source: "studio/asset/texture_image.jpg"
             size_hint: None, None
             width: root.width - dp(50)
             height: root.height - dp(75)
+            padding: dp(10)
             pos_hint: {"center_x": .5, "center_y": .5}
 
         MDBoxLayout:

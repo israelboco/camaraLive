@@ -156,7 +156,7 @@ class AppCameraLive(MDApp):
         self.menu_items_camera = [
             {
                 "viewclass": "OneLineListItem",
-                "text": str(index["interface"]),
+                "text": str(index["ip_address"]),
                 "trailing_icon": str(index["trailing_icon"]),
                 "on_release": lambda x=index: self.selectDropdownNetwork(x),
             } for index in self.getnetworks.get_networks()

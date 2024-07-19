@@ -109,7 +109,7 @@ class ClickableTextFieldRoundCam(MDRelativeLayout):
         print(path)
         # Snackbar(text=f"Selected: {path}").open()
         # self.root.ids.video_player.source = path
-        # self.root.ids.video_player.state = 'play'
+        #  self.root.ids.video_player.state = 'play'
 
     def exit_manager(self, *args):
         self.manager_open = False
