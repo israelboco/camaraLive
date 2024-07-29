@@ -12,7 +12,7 @@
             md_bg_color: "#484848"
             left_action_items: [["home", lambda x: root.callWelcome(), "Home"]]
             right_action_items: [["plus-outline", lambda x: root.dialog_box_cam(), "Add Cam"], ["web", lambda x: app.callback(x), "Connexion"], ["cog-outline", lambda x: app.callback(x), "Paramètre"], ["account-outline", lambda x: app.callback(x), "Compte"]]
-        
+         
         MDBoxLayout:
             orientation: "horizontal"
 
@@ -43,7 +43,8 @@
                             size_hint: None, None
                             size: dp(20), dp(20)
                             pos_hint: {"center_x": .5, "center_y": .5}
-                            active: False                        
+                            active: False  
+                                                  
                         IconButtonAction:
                             id: list_camera
                             icon: "camera-outline"
@@ -134,19 +135,19 @@
                 md_bg_color: "#484848"
 
                 MDBoxLayout:
-                    id: box_video
                     md_bg_color: "#484848"
                     
                     MDScrollView:
 
                         MDGridLayout:
+                            id: box_video
                             padding: dp(10)
                             spacing: dp(10)
                             size_hint_y: 1.5
                             adaptive_height: True
                             cols: 2
 
-                            CardScrollImage:
+                            # CardScrollImage:
 
 
 

@@ -73,9 +73,6 @@ class FocusButton(FocusBehavior, Button):
         self.unfocus_color = "#676767"
         self.opposite_colors: True
 
-class CardScrollImage(MDCard):
-    pass
-
 
 class ClickableTextFieldRound(MDRelativeLayout):
     text = StringProperty()

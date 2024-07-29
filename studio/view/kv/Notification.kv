@@ -92,6 +92,8 @@
         MDRectangleFlatButton:
             text: 'Ouvrir'
             pos_hint: {'center_x': .4, 'center_y': .5}
+            on_release: 
+                root.open_cam()
 
 
 
@@ -133,4 +135,4 @@
         on_release: 
             root.file_manager_open()
             # asynckivy.start(app.on_start_video())
-
+ 

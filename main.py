@@ -14,14 +14,17 @@ from studio.constants.GetNetworks import GetNetworks
 from studio.controller.ConnectLiveController import ConnectLiveController
 from studio.controller.CamController import CamController
 from studio.controller.ExpansionPanel import ExpansionPanelVid, FocusButton, IconButtonAction
-from kivymd.uix.expansionpanel import  MDExpansionPanel 
+from kivymd.uix.expansionpanel import MDExpansionPanel 
 from studio.enum.FormatEnum import FormatEnum
+from studio.view import CamViewImage
 from studio.view.CamCapture import CamCapture
 from studio.view.CameraFrame import Camera
 from studio.view.CardAudio import CardAudio
 from studio.view.MyProcess import MyProcess
-from studio.view.ScreenMain import MainScreenView, ScreenMain
+from studio.view.ScreenMain import MainScreenView,  ScreenMain
 from kivymd.icon_definitions import md_icons
+
+from studio.view.TabVideos import CardScrollImage
 
 
 class AppCameraLive(MDApp):
@@ -64,15 +67,8 @@ class AppCameraLive(MDApp):
     def add_tab(self):
         try:
             self.index += 1
-            name_tab = f"CamLive {self.index}"
-            # tab = TabVideo(
-            #     id=str(self.index),
-            #     tab_label_text=f"[ref={name_tab}][font={fonts[-1]["fn_regular"]}]{md_icons["close"]}[/font][/ref]{name_tab}",
-            # )
-            # self.screenMain.ids.tab_videos.add_widget(
-            #     tab
-            # )
-            
+            tab = CardScrollImage()
+            self.screenMain.ids.box_video.add_widget(tab)    
         except Exception as e:
             print(e)
         self.affiche_audio()
@@ -80,8 +76,8 @@ class AppCameraLive(MDApp):
     def remove_tab(self):
         if self.index > 1:
             self.index -= 1
-        self.screenMain.ids.tab_videos.remove_widget(
-            self.screenMain.ids.tab_videos.get_tab_list()[-1]
+        self.screenMain.ids.box_video.remove_widget(
+            self.screenMain.ids.box_video.get_tab_list()[-1]
         )
 
     def on_ref_press(
@@ -96,7 +92,7 @@ class AppCameraLive(MDApp):
             if instance_tab.tab_label_text == instance_tab_label.text:
                 instance_tab_videos.remove_widget(instance_tab_label)
                 self.index -= 1
-                break
+                break 
 
     async def on_start_video(self):
         self.screenMain.ids.spinner.active = True
@@ -109,10 +105,6 @@ class AppCameraLive(MDApp):
         self.screenMain.ids.spinner.active = False
     
     async def async_cam_thread(self):
-        self.resource_cam_thread = Thread(target=self.cam_thread)
-        self.resource_cam_thread.start()
-
-    def cam_thread(self):
         text = self.screenMain.ids.lien.text
         if text:
             asynckivy.start(self.start_source(text))
@@ -156,7 +148,7 @@ class AppCameraLive(MDApp):
         self.menu_items_camera = [
             {
                 "viewclass": "OneLineListItem",
-                "text": str(index["ip_address"]),
+                "text": str(index["interface"]),
                 "trailing_icon": str(index["trailing_icon"]),
                 "on_release": lambda x=index: self.selectDropdownNetwork(x),
             } for index in self.getnetworks.get_networks()
@@ -216,15 +208,6 @@ class AppCameraLive(MDApp):
     
     def stop_connect_live_box(self):
         self.connectLiveController.stop()
-
-    # def tap_expansion_chevron(
-    #     self, panel: MDExpansionPanel, chevron: MDIconButton
-    # ):
-    #     panel.open() if not panel.is_open else panel.close()
-    #     panel.set_chevron_down(
-    #         chevron
-    #     ) if not panel.is_open else panel.set_chevron_up(chevron)
-
 
 app = AppCameraLive()
 app.run()

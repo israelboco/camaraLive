@@ -25,10 +25,10 @@ class ScreenWelcome(MDScreen):
                 text = '[i][color=#5AA6FF]Meilleure application pour optimiser la capture et la diffusion multi-sources en temps réel lors d\'événements : une solution rentable avec Cam Live.[/i][/color]'
                 if not self.dialog:
                         self.dialog = MDDialog(
-                                title='[b][color=#5AA6FF]A propos[/color][/b]',
-                                type="custom",
-                                content_cls=AProposBox(),
-                                md_bg_color="#262626",
+                            title='[b][color=#5AA6FF]A propos[/color][/b]',
+                            type="custom",
+                            content_cls=AProposBox(),
+                            md_bg_color="#262626",
                         )
                         self.dialog.content_cls.label_propos.text = text
                         self.dialog.open()
@@ -54,4 +54,12 @@ class MainScreenView(MDScreenManager):
 
 
 class AProposBox(MDBoxLayout):
-        pass
+        
+        
+        def __init__(self, dialog, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.dialog = dialog
+        
+        def open_cam(self):
+            self.app.add_tab()
+            self.dialog.dimiss()

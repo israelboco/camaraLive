@@ -1,11 +1,12 @@
 import os
 from datetime import datetime
 import multiprocessing
+import time
 import cv2
 from kivy.clock import Clock
 from kivy.core.image import Texture
 from kivymd.utils import asynckivy
-
+from threading import Thread
 from studio.view import AudioRecorder, VideoRecorder
 from studio.view.CameraFrame import Camera
 
@@ -35,7 +36,6 @@ class CamCapture:
 
     def afert(self, delay, func):
         Clock.schedule_once(func, delay)
-        # self.window.after(delay, func)
 
     def stop_record(self):
         self.recording = not self.recording
@@ -78,6 +78,36 @@ class CamCapture:
             print(f"lancer====>>>> {cam}")
             self.update()
             return cam
+    
+    def recordUpdate(self):
+        if self.videoCamera:
+            # Lire une image depuis le flux vidéo
+            self.resource_record_cam_thread = Thread(target=self.record_cam_thread)
+            self.resource_record_cam_thread.start()
+
+    def record_cam_thread(self):
+        # Enregistrer la frame si l'enregistrement est activé
+        while self.recording:
+            ret, frame = self.videoCamera.read()
+            if ret:
+                self.frames_to_record.append(frame)
+                if not self.record_demarage:
+                    self.record_demarage = not self.record_demarage
+                    asynckivy.start(self.cameraVideo.record_demarage(self.frames_to_record))
+                    self.frames_to_record = []
+                if self.frames_to_record:
+                    asynckivy.start(self.cameraVideo.update_enregistrer(self.frames_to_record))  
+            time(1)              
+
+    
+    def traitement_update(self):
+        if self.videoCamera:
+            # Lire une image depuis le flux vidéo
+            self.resource_traitement_cam_thread = Thread(target=self.traitement_cam_thread)
+            self.resource_traitement_cam_thread.start()
+    
+    def traitement_cam_thread(self):
+        pass
 
     def update(self, dt=None):
 
@@ -100,18 +130,6 @@ class CamCapture:
                 if self.capture == 2:
                     self.capture = 0
 
-                # Enregistrer la frame si l'enregistrement est activé
-                if self.recording:
-                    # print(self.frames_to_record)
-                    self.frames_to_record.append(frame)
-                    if not self.record_demarage:
-                        self.record_demarage = not self.record_demarage
-                        asynckivy.start(self.cameraVideo.record_demarage(self.frames_to_record))
-                        # self.record_update()
-                        self.frames_to_record = []
-                    if self.frames_to_record:
-                        asynckivy.start(self.cameraVideo.update_enregistrer(self.frames_to_record))                
-
             time = 1 / 30
             self.afert(time, self.update)
 
@@ -120,10 +138,6 @@ class CamCapture:
             if self.recording and self.frames_to_record:
                 await self.cameraVideo.update_enregistrer(self.frames_to_record)
                 self.frames_to_record = []
-                # processus = multiprocessing.Process(target=self.afert, args=(10, self.record_update))
-                # processus.start()
-                # processus.join()
-                # self.afert(20, self.record_update)
         asynckivy.start(record())
 
         # self.record_update()

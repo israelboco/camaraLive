@@ -1,5 +1,5 @@
 
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty 
 from kivy.uix.dropdown import DropDown
 from kivymd.utils import asynckivy
 from studio.controller.CamController import CamController
@@ -13,7 +13,6 @@ class CamViewImage:
 
     dropdown = None
     camController = CamController()
-    resource_cam_thread = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,18 +23,9 @@ class CamViewImage:
         if self.camController.videoCamera:
             self.ids.spinner.active = False
             return toast("stopper d'abord la camera en cours.")
-        self.resource_cam_thread = None
-        await self.async_cam_thread()
-        self.ids.spinner.active = False
-    
-    async def async_cam_thread(self):
-        self.resource_cam_thread = Thread(target=self.cam_thread)
-        self.resource_cam_thread.start()
-
-    def cam_thread(self):
         text = self.ids.source.text
-        if text:
-            asynckivy.start(self.start_source(text))
+        await self.start_source(text)
+        self.ids.spinner.active = False
     
     async def start_source(self, text):
         cam = None
