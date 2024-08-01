@@ -10,9 +10,11 @@ from kivymd.toast import toast
 from threading import Thread
 
 class CamViewImage:
-
+    
     dropdown = None
     camController = CamController()
+    app = None
+    cam_view = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,15 +32,15 @@ class CamViewImage:
     async def start_source(self, text):
         cam = None
         await asynckivy.sleep(2)
-        for content in self.app.listCam:
+        for content in self.app.data.listCam:
             listText= content[0]
             if text == listText:
                 cam = content[1]
                 break
-        lancer = await self.camController.add_start_video(text, self, cam)
+        lancer = await self.camController.add_start_video(text, self.cam_view, cam, self.app)
         if lancer:
             print(f"start_source====>>>> {lancer}")
-            if not self.app.camController.videoCamera:
+            if not self.app.data.camController.videoCamera:
                 asynckivy.start(self.app.start_source(text))
             if not cam:
                 self.app.listCam.append((text, lancer))

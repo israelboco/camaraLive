@@ -7,6 +7,7 @@ from studio.constants.GetNetworks import GetNetworks
 class NotificationService:
     dialogConnectLiveBox = None
     dialogAddCamBox = None
+    dialogOpenPramBox = None
 
 
     def start_connect_live(self):
@@ -28,6 +29,19 @@ class NotificationService:
                     md_bg_color="#262626",
             )
         self.dialogAddCamBox.open()
+    
+    def open_param(self):
+        if not self.dialogOpenPramBox:
+            self.dialogOpenPramBox = MDDialog(
+                    title="[b][color=#5AA6FF]Parametre[/color][/b]",
+                    type="custom",
+                    content_cls=ParamBox(),
+                    md_bg_color="#262626",
+                    pos_hint={'center_x': .75,'center_y': .75},
+                    size_hint_x=.3,
+                    size_hint_y=.2,
+            )
+        self.dialogOpenPramBox.open()
 
 
 class ConnectLiveBox(MDBoxLayout):
@@ -43,6 +57,9 @@ class ConnectLiveBox(MDBoxLayout):
             self.ids.demarrer.text = "Démarrer"
             self.ids.demarrer.md_bg_color = '#676767'
             self.app.stop_connect_live_box()
+
+class ParamBox(MDBoxLayout):
+    pass
 
 
 class AddCamBox(MDBoxLayout):
@@ -61,19 +78,11 @@ class AddCamBox(MDBoxLayout):
             } for index in self.getnetworks.get_networks()
         ]
 
-        self.dropdown2 = MDDropdownMenu(items=self.menu_items_camera, width_mult=3, caller=self.ids.list_camera)
+        self.dropdown2 = MDDropdownMenu(md_bg_color="#bdc6b0",items=self.menu_items_camera, width_mult=3, caller=self.ids.list_camera)
 
     
-    def add_cam(self):
-        # if self.ids.demarrer.text == "Démarrer":
-        #     self.ids.demarrer.text = "Allumer"
-        #     self.ids.demarrer.md_bg_color = '#00FF40'
-        #     self.app.demarer_connect_live_box()
-        # else:
-        #     self.ids.demarrer.text = "Démarrer"
-        #     self.ids.demarrer.md_bg_color = '#676767'
-        #     self.app.stop_connect_live_box()
-        pass
+    def open_cam(self):
+        self.app.add_tab()
     
     def affiche_camera(self):
 

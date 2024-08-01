@@ -13,10 +13,10 @@ from studio.Service.NotificationService import NotificationService
 from studio.constants.GetNetworks import GetNetworks
 from studio.controller.ConnectLiveController import ConnectLiveController
 from studio.controller.CamController import CamController
-from studio.controller.ExpansionPanel import ExpansionPanelVid, FocusButton, IconButtonAction
-from kivymd.uix.expansionpanel import MDExpansionPanel 
 from studio.enum.FormatEnum import FormatEnum
+from studio.model.Data import Data
 from studio.view import CamViewImage
+from studio.controller.ExpansionPanel import FocusButton, IconButtonAction
 from studio.view.CamCapture import CamCapture
 from studio.view.CameraFrame import Camera
 from studio.view.CardAudio import CardAudio
@@ -28,14 +28,6 @@ from studio.view.TabVideos import CardScrollImage
 
 
 class AppCameraLive(MDApp):
-    index = 1
-    listProces = []
-    listCam = []
-    camController = CamController()
-    connectLiveController = None
-    menu_items_format = []
-    menu_items_camera = []
-    resource_cam_thread = None
  
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -45,6 +37,7 @@ class AppCameraLive(MDApp):
         self.getnetworks = GetNetworks()
         self.notificationService = NotificationService()
         self.screenMain = self.main_view.screen_main
+        self.data = Data(self)
 
     def build(self) -> MDScreen:
         self.title = "Cam Live"
@@ -55,27 +48,46 @@ class AppCameraLive(MDApp):
         self.affiche_format()
         self.affiche_camera()
         self.affiche_audio()
-        expansion = ExpansionPanelVid()
-        expansion.start_expand_one()
-        expansion.start_expand_two()
-        # self.screenMain.ids.one_widget.add_widget(expansion.expand_one)
-        # self.screenMain.ids.two_widget.add_widget(expansion.expand_two)
+        self.data.expansion.start_expand_one() 
+        self.data.expansion.start_expand_two()
+    
+    def start_card_view(self):
+        if self.data.expand_two:
+            self.screenMain.ids.two_widget.add_widget(self.data.expansion.expand_two)
+            self.data.expand_two = False
+        else:
+            self.screenMain.ids.two_widget.remove_widget(self.data.expansion.expand_two)
+            self.data.expand_two = True
+
+    def start_connexion(self):
+        if self.data.expand_one:
+            self.screenMain.ids.one_widget.add_widget(self.data.expansion.expand_one)
+            self.data.expand_one = False
+        else:
+            self.screenMain.ids.one_widget.remove_widget(self.data.expansion.expand_one)
+            self.data.expand_one = True
+    
+    def open_param(self):
+        self.notificationService.open_param()
 
     def on_stop(self):
-        pass
+        print("Arrêt du programme principal...")
+        self.data.manager.stop_all_threads()
+        self.data.db_manager.close_connection()
 
     def add_tab(self):
         try:
-            self.index += 1
-            tab = CardScrollImage()
+            print('top')
+            self.data.index += 1
+            tab = CardScrollImage(self)
             self.screenMain.ids.box_video.add_widget(tab)    
         except Exception as e:
             print(e)
         self.affiche_audio()
 
     def remove_tab(self):
-        if self.index > 1:
-            self.index -= 1
+        if self.data.index > 1:
+            self.data.index -= 1
         self.screenMain.ids.box_video.remove_widget(
             self.screenMain.ids.box_video.get_tab_list()[-1]
         )
@@ -97,7 +109,7 @@ class AppCameraLive(MDApp):
     async def on_start_video(self):
         self.screenMain.ids.spinner.active = True
         await asynckivy.sleep(2)
-        if self.camController.videoCamera:
+        if self.data.camController.videoCamera:
             self.screenMain.ids.spinner.active = False
             return toast("stopper d'abord la camera en cours.")
         self.resource_cam_thread = None
@@ -111,21 +123,21 @@ class AppCameraLive(MDApp):
     
     async def start_source(self, text):
         cam = None
-        for content in self.listCam:
+        for content in self.data.listCam:
             listText= content[0]
             if text == listText:
                 cam = content[1]
                 break
-        lancer = await self.camController.add_start_video(text, self.screenMain, cam)
+        lancer = await self.data.camController.add_start_video(text, self.screenMain, cam)
         if not lancer:
             return
-        if not self.connectLiveController:
+        if not self.data.connectLiveController:
             print("===============>>>>>>> connectLiveController")
-            self.connectLiveController = ConnectLiveController(self.camController)
+            self.data.connectLiveController = ConnectLiveController(self.data.camController)
         if lancer:
             print(f"start_source====>>>> {lancer}")
             if not cam:
-                self.listCam.append((text, lancer))
+                self.data.listCam.append((text, lancer))
 
     def affiche_format(self):
        
@@ -164,7 +176,7 @@ class AppCameraLive(MDApp):
                 "viewclass": "OneLineListItem",
                 "text": f"Audio Cam {str(index + 1)}",
                 "on_release": lambda x=f"Audio Cam {str(index + 1)}": self.selectDropdownAudio(x),
-            } for index in range(0, self.index)
+            } for index in range(0, self.data.index)
         ]
 
         self.dropdown3 = MDDropdownMenu(md_bg_color="#bdc6b0",items=self.menu_items_audio, width_mult=3, caller=self.screenMain.ids.microphone)
@@ -178,7 +190,7 @@ class AppCameraLive(MDApp):
 
     def selectDropdown(self, text):
         self.screenMain.ids.label_format.text = "[color=#4287f5]format :" + str(text.value) + "[/color]"
-        self.camController.select_format(text.value)
+        self.data.camController.select_format(text.value)
         if self.dropdown1:
             self.dropdown1.dismiss()
     
@@ -199,15 +211,15 @@ class AppCameraLive(MDApp):
             self.dropdown3.dismiss()
      
     def start_connect_live(self):
-        if not self.camController.videoCamera:
+        if not self.data.camController.videoCamera:
             return toast("connectez vous a un camera")
         self.notificationService.start_connect_live()
     
     def demarer_connect_live_box(self):
-        self.connectLiveController.start()
+        self.data.connectLiveController.start()
     
     def stop_connect_live_box(self):
-        self.connectLiveController.stop()
+        self.data.connectLiveController.stop()
 
 app = AppCameraLive()
 app.run()

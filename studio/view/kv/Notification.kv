@@ -96,10 +96,6 @@
                 root.open_cam()
 
 
-
-
-
-
 <ClickableTextFieldRoundCam>:
     size_hint_y: None
     height: text_field.height
@@ -136,3 +132,44 @@
             root.file_manager_open()
             # asynckivy.start(app.on_start_video())
  
+
+<ParamBox>:
+    size_hint_y: None
+    height: dp(100)
+    # width: dp(100)
+
+    MDScrollView:
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            size_hint_y: 1
+            # adaptive_height: True
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                padding: dp(10)
+                spacing: dp(10)
+
+                MDTextField:
+                    id: text_field
+                    hint_text: 'stockage'
+                    font_size: dp(10)
+                    icon_left_color_normal: "#4287f5"
+                    icon_left_color_focus: "#4287f5"
+                    hint_text_color_normal: "#4287f5"
+                    text_color_normal: "#4287f5"
+                    line_color_focus: "#4287f5"
+                    line_color_normal: "#4287f5"
+                    text: 'root.text'
+                    helper_text_mode: "on_focus"
+
+                MDRectangleFlatButton:
+                    text: 'parcourir'
+                    on_release: 
+                    # root.file_manager_open()
+
+            MDRectangleFlatButton:
+                text: 'Enregistrer'
+                pos_hint: {"center_y": .5}
+                on_release: 
+                # root.file_manager_open()

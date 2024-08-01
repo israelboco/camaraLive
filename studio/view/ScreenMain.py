@@ -35,18 +35,15 @@ class ScreenWelcome(MDScreen):
 
 
 class CardViewImage(MDCard):
-        pass
-
+        
+        def __init__(self, *args, **kwargs):
+               super().__init__(*args, **kwargs)
+               
 
 class CardReducteImage(MDCard, FocusBehavior):
         def __init__(self, unfocus_color=None, **kwargs):
                 super().__init__(**kwargs)
                 self.focus_color = "#DCE8F8"
-                if not unfocus_color:
-                        self.unfocus_color = "#676767"
-                else:
-                        self.unfocus_color = unfocus_color
-                        self.opposite_colors: True
 
 
 class MainScreenView(MDScreenManager):

@@ -11,7 +11,7 @@
             title: "Cam Live"
             md_bg_color: "#484848"
             left_action_items: [["home", lambda x: root.callWelcome(), "Home"]]
-            right_action_items: [["plus-outline", lambda x: root.dialog_box_cam(), "Add Cam"], ["web", lambda x: app.callback(x), "Connexion"], ["cog-outline", lambda x: app.callback(x), "Paramètre"], ["account-outline", lambda x: app.callback(x), "Compte"]]
+            right_action_items: [["plus-outline", lambda x: root.dialog_box_cam(), "Add Cam"], ["web", lambda x: app.start_connexion(), "Connexion"], ["cog-outline", lambda x: app.open_param(), "Paramètre"]]# , ["account-outline", lambda x: app.callback(x), "Compte"]
          
         MDBoxLayout:
             orientation: "horizontal"
@@ -121,11 +121,10 @@
                             icon_color: "#4287f5"
                             icon_size: dp(15)
                             on_release:
-                                app.camController.on_record()
+                                app.data.camController.on_record()
 
                 CardViewImage:
                     id: cardImage
-                    camController: app.camController
                     pos_hint: {"center_x": .5, "center_y": .5}
                     size_hint: .9, .5
 
@@ -226,7 +225,9 @@
                 theme_icon_color: "Custom"
                 icon_color: "#4287f5"
                 on_release:
-                    root.camController.on_stop()
+                    app.data.camController.on_stop()
+
+                    # root.camController.on_stop()
 
             MDLabel:
                 id: lecture

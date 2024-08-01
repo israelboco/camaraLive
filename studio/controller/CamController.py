@@ -9,6 +9,7 @@ class CamController(CamCapture):
     timer = False
     seconds = 0
     hour = 0
+    app = None
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -52,9 +53,9 @@ class CamController(CamCapture):
             if not self.videoCamera:
                 return toast('aucun camera en cours de lecture')
             try:
-                print(self.screen_video.app.listCam)
+                print(self.screen_video.app.data.listCam)
                 print(self.videoCamera, self.lien)
-                self.screen_video.app.listCam.remove((self.lien, self.videoCamera))
+                self.screen_video.app.data.listCam.remove((self.lien, self.videoCamera))
             except Exception as e:
                 print(e)
             self.screen_video.ids.cardImage.ids.bage_image.md_bg_color = '#FF0000'
@@ -103,7 +104,7 @@ class CamController(CamCapture):
         try:
             if not self.videoCamera:
                 return toast('La cam principe ne peux pas basculer sur ce camera')
-            cam = self.screen_video.app.camController.init_on_switch(self.videoCamera)
+            cam = self.screen_video.app.data.camController.init_on_switch(self.videoCamera)
             print(cam)
         except Exception as e:
             print(e)

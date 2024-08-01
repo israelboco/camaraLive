@@ -30,15 +30,6 @@
                 icon: 'youtube'
                 on_release:
                     print('on_release')
-             
-            # TwoLineIconListItem:
-            #     text: "(050)-123-45-67"
-            #     secondary_text: "Mobile"
-
-            #     IconLeftWidget:
-            #         icon: 'instagram'
-            #     IconRightWidget:
-            #         icon: 'instagram'
 
 
 <ContentExpandTwo>:
@@ -149,19 +140,45 @@
 
 <CardReducteImage>:
     md_bg_color: "#676767" 
-    radius: 24
-    image: image
-    size_hint_x: None
-    width: dp(100)
+    app: app
 
-    MDBoxLayout:
-        md_bg_color: "#676767"
+    MDScrollView:
 
-        Image:
-            id: image
-            source: "studio\\asset\\texture_image.jpg"
-            size_hint: root.size 
-            pos_hint: {"center_x": .5, "center_y": .5}
+        MDBoxLayout:
+            orientation: 'vertical'
+            adaptive_height: True
+
+            MDBoxLayout:
+                orientation: "horizontal"
+
+                MDSpinner:  
+                    id: spinner
+                    size_hint: None, None
+                    size: dp(20), dp(20)
+                    pos_hint: {'center_y': .5}
+                    active: False
+                
+                IconButtonAction:
+                    id: list_camera
+                    icon: "camera-outline"
+                    icon_size: dp(20)
+                    style: "tonal"
+                    theme_bg_color: "Custom"
+                    theme_icon_color: "Custom"
+                    unfocus_color: '#262626'
+                    icon_color: "#4287f5"
+                    pos_hint: {"center_y": .5}
+                    on_release: root.listcamera()
+
+                ClickableTextFieldRoundCam:
+                    id: lien
+                    pos_hint: {"center_y": .5}
+
+                MDRectangleFlatButton:
+                    text: 'Ouvrir'
+                    pos_hint: {'center_x': .4, 'center_y': .5}
+                    on_release: 
+                        root.open_cam()
 
 
 
@@ -175,14 +192,17 @@
     lecture: lecture
     size_hint_y: None
     height: dp(180)
+    on_release:
+        app.start_card_view()
 
     MDBoxLayout:
         md_bg_color: "#676767"
         orientation: "vertical"
 
-        MDRelativeLayout:
+        MDBoxLayout:
+            orientation: 'horizontal'
             size_hint_y: None
-            height: dp(15)
+            height: dp(30)
 
             MDCard:
                 id: bage_image

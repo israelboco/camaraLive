@@ -12,6 +12,8 @@ from kivymd.uix.filemanager import MDFileManager
 from kivymd.uix.snackbar import Snackbar
 from tkinter import filedialog
 
+from studio.view.ScreenMain import CardReducteImage
+
 
 class IconButtonAction(FocusBehavior, MagicBehavior, RotateBehavior, MDIconButton):
     
@@ -39,7 +41,7 @@ class ExpansionPanelVid:
 
     def start_expand_one(self):
         self.expand_one = MDExpansionPanel(
-            icon="studio\\asset\holo.png",
+            icon="studio/asset/holo.png",
             content=ContentExpandOne(id='connect'),  # content of panel
             panel_cls=MDExpansionPanelTwoLine(  # content of header
                 text="Connect to an online network",
@@ -49,8 +51,8 @@ class ExpansionPanelVid:
     
     def start_expand_two(self):
         self.expand_two = MDExpansionPanel(
-            icon="studio\\asset\holo.png",
-            content=ContentExpandTwo(),  # content of panel
+            icon="studio/asset/holo.png",
+            content=CardReducteImage(),  # content of panel
             panel_cls=MDExpansionPanelOneLine(  # content of header
                 text="Listes des cameras connecté",
             )

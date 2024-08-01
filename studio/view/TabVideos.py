@@ -17,8 +17,10 @@ from studio.view.CamViewImage import CamViewImage
 class CardScrollImage(MDCard, CamViewImage):
     '''Class implementing content for a tab.''' 
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, app, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.app = app
+        self.camController.app = app
     
     def on_start_video(self):
         asynckivy.start(self.on_start_video())
