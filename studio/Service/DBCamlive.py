@@ -9,12 +9,50 @@ class DatabaseManager:
     def create_table(self):
         try:
             create_table_sql = """
+    
                 CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
                     name TEXT NOT NULL,
-                    age INTEGER
+                    --profile TEXT DEFAULT NULL,
+                    password TEXT NOT NULL,
+                );
+
+                CREATE TABLE IF NOT EXISTS sessions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    created_at Date DEFAULT CURRENT_DATE,
+                    update_at Date DEFAULT CURRENT_DATE,
+                    fk_user INTEGER NOT NULL,
+                    FOREIGN KEY(fk_user) REFERENCES users(id) ON DELETE CASCADE
+                );
+                CREATE TABLE IF NOT EXISTS configs (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    path_storage TEXT DEFAULT NULL,
+                    audio TEXT DEFAULT NULL,
+                    fk_session INTEGER NOT NULL,
+                    FOREIGN KEY(fk_session) REFERENCES sessions(id) ON DELETE CASCADE
+                );
+                CREATE TABLE IF NOT EXISTS camlists (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    cam_label TEXT DEFAULT NULL,
+                    save BOOLEAN DEFAULT FALSE,
+                    format TEXT DEFAULT NULL,
+                    fk_session INTEGER NOT NULL,
+                    FOREIGN KEY(fk_session) REFERENCES sessions(id) ON DELETE CASCADE
+                );
+                CREATE TABLE IF NOT EXISTS traitements (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    cam_label TEXT DEFAULT NULL,
+                    detection BOOLEAN DEFAULT FALSE,
+                    path TEXT DEFAULT NULL,
+                    active_detection TEXT DEFAULT NULL,
+                    etat BOOLEAN DEFAULT FALSE,
+                    fk_session INTEGER NOT NULL,
+                    FOREIGN KEY(fk_session) REFERENCES sessions(id) ON DELETE CASCADE
                 );
                 """
+            self.cursor.execute("""
+			PRAGMA foreign_keys = ON
+			""")
             self.cursor.execute(create_table_sql)
         except sqlite3.Error as e:
             print(e)

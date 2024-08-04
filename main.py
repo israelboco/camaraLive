@@ -1,4 +1,4 @@
-import kivymd 
+import kivymd  
 from kivy.lang import Builder
 from kivymd.app import MDApp 
 from kivymd.font_definitions import fonts
@@ -12,7 +12,7 @@ from threading import Thread
 from studio.Service.NotificationService import NotificationService
 from studio.constants.GetNetworks import GetNetworks
 from studio.controller.ConnectLiveController import ConnectLiveController
-from studio.controller.CamController import CamController
+from studio.controller.CamController import  CamController
 from studio.enum.FormatEnum import FormatEnum
 from studio.model.Data import Data
 from studio.view import CamViewImage
@@ -50,6 +50,7 @@ class AppCameraLive(MDApp):
         self.affiche_audio()
         self.data.expansion.start_expand_one() 
         self.data.expansion.start_expand_two()
+        self.data.db_manager.create_table()
     
     def start_card_view(self):
         if self.data.expand_two:
@@ -79,7 +80,9 @@ class AppCameraLive(MDApp):
         try:
             print('top')
             self.data.index += 1
-            tab = CardScrollImage(self)
+            tab = CardScrollImage(
+                self.data.index, self
+                )
             self.screenMain.ids.box_video.add_widget(tab)    
         except Exception as e:
             print(e)
@@ -149,10 +152,9 @@ class AppCameraLive(MDApp):
             } for index in list(FormatEnum)
         ]
 
-        self.dropdown1 = MDDropdownMenu(md_bg_color="#bdc6b0",items=self.menu_items_format, width_mult=4, caller=self.screenMain.ids.shape)
+        self.dropdown1 = MDDropdownMenu(md_bg_color="#bdc6b0",items=self.menu_items_format, width_mult=3, caller=self.screenMain.ids.shape)
 
     def listDropdown(self):
-        print("listDropdown")
         self.dropdown1.open()
 
     def affiche_camera(self):

@@ -41,7 +41,7 @@
                     text: "[b][color=#4287f5] Connexion sur le réseau local [/color][/b]"
                     markup: True
                     halign: "left"
-                 
+                   
                 MDRectangleFlatButton:
                     id: demarrer
                     text: "Démarrer"
@@ -100,7 +100,7 @@
     size_hint_y: None
     height: text_field.height
     padding: dp(10)
-    
+     
     MDTextField:
         id: text_field
         hint_text: root.hint_text
@@ -131,7 +131,7 @@
         on_release: 
             root.file_manager_open()
             # asynckivy.start(app.on_start_video())
- 
+  
 
 <ParamBox>:
     size_hint_y: None

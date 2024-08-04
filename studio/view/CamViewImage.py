@@ -5,12 +5,12 @@ from kivymd.utils import asynckivy
 from studio.controller.CamController import CamController
 from studio.controller.ExpansionPanel import FocusButton
 from studio.enum.FormatEnum import FormatEnum
-from studio.view.CamCapture import CamCapture
+from studio.view.CamCapture import  CamCapture
 from kivymd.toast import toast
 from threading import Thread
 
 class CamViewImage:
-    
+
     dropdown = None
     camController = CamController()
     app = None
