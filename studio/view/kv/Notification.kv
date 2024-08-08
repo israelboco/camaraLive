@@ -60,6 +60,7 @@
 
 <AddCamBox>:
     app: app
+    lien: lien
     size_hint_y: None
     height: dp(100)
 
@@ -87,13 +88,14 @@
 
         ClickableTextFieldRoundCam:
             id: lien
+            hint_text: "source"
             pos_hint: {"center_y": .5}
 
-        MDRectangleFlatButton:
-            text: 'Ouvrir'
-            pos_hint: {'center_x': .4, 'center_y': .5}
-            on_release: 
-                root.open_cam()
+        # MDRectangleFlatButton:
+        #     text: 'Ouvrir'
+        #     pos_hint: {'center_x': .4, 'center_y': .5}
+        #     on_release: 
+        #         root.open_cam(self.lien.text)
 
 
 <ClickableTextFieldRoundCam>:

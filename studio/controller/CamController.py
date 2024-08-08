@@ -37,7 +37,7 @@ class CamController(CamCapture):
         try:
             if not self.screen_video:
                 return toast('entrer url de la source')
-            lancer = await self.lancer(cam)
+            lancer = await self.lancer(cam, self.app)
             if not self.videoCamera:
                 return toast('Lien source invalide, verifier et rééssayer')
             self.screen_video.ids.cardImage.ids.play.icon = 'pause'

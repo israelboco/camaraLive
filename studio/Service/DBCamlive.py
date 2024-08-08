@@ -71,9 +71,12 @@ class DatabaseManager:
         except sqlite3.Error as e:
             print(e)
 
-    def fetch_data(self, select_sql):
+    def fetch_data(self, select_sql=None, data=None):
         try:
-            self.cursor.execute(select_sql)
+            if data:
+                self.cursor.execute(select_sql, data)
+            else:   
+                self.cursor.execute(select_sql)
             rows = self.cursor.fetchall()
             return rows
         except sqlite3.Error as e:

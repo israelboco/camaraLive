@@ -20,6 +20,7 @@ class CamCapture:
     
     videoCamera = None
     audioCamera = None
+    app = None
 
     cameraVideo = Camera()
     
@@ -61,7 +62,8 @@ class CamCapture:
         self.recording = True
         print("Star record: " + str(self.recording))
 
-    async def lancer(self, cam=None):
+    async def lancer(self, cam=None, app=None):
+        self.app = app
         await asynckivy.sleep(0.8)
         if not cam:
             if self.videoCamera is None:
@@ -82,8 +84,9 @@ class CamCapture:
     def recordUpdate(self):
         if self.videoCamera:
             # Lire une image depuis le flux vidéo
-            self.resource_record_cam_thread = Thread(target=self.record_cam_thread)
-            self.resource_record_cam_thread.start()
+            self.resource_record_cam_thread = self.app.data.manager.start_thread(self.record_cam_thread)
+            # self.resource_record_cam_thread = Thread(target=self.record_cam_thread)
+            # self.resource_record_cam_thread.start()
 
     def record_cam_thread(self):
         # Enregistrer la frame si l'enregistrement est activé
@@ -126,7 +129,6 @@ class CamCapture:
                     name = str(self.capture) + "_" + datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
                     self.save_frame_camera_key("enregistrement/capture", 'capture', name, frame)
                     self.capture += 1
-                    print(self.capture)
                 if self.capture == 2:
                     self.capture = 0
 

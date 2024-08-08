@@ -8,7 +8,6 @@ from kivymd.uix.menu import MDDropdownMenu
 from kivymd.utils import asynckivy 
 from kivymd.toast import toast
 from threading import Thread
-
 from studio.Service.NotificationService import NotificationService
 from studio.constants.GetNetworks import GetNetworks
 from studio.controller.ConnectLiveController import ConnectLiveController
@@ -76,14 +75,14 @@ class AppCameraLive(MDApp):
         self.data.manager.stop_all_threads()
         self.data.db_manager.close_connection()
 
-    def add_tab(self):
+    def add_tab(self, text):
         try:
             print('top')
             self.data.index += 1
             tab = CardScrollImage(
-                self.data.index, self
+                text, self
                 )
-            self.screenMain.ids.box_video.add_widget(tab)    
+            self.screenMain.ids.box_video.add_widget(tab) 
         except Exception as e:
             print(e)
         self.affiche_audio()
