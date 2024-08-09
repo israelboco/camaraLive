@@ -51,13 +51,17 @@ class AppCameraLive(MDApp):
         self.data.expansion.start_expand_two()
         self.data.db_manager.create_table()
     
-    def start_card_view(self):
+    def start_card_view(self, controle=None):
         if self.data.expand_two:
             self.screenMain.ids.two_widget.add_widget(self.data.expansion.expand_two)
             self.data.expand_two = False
+            self.data.expand_two.content.controle = controle
+            self.data.expand_two.content.start()
         else:
             self.screenMain.ids.two_widget.remove_widget(self.data.expansion.expand_two)
             self.data.expand_two = True
+            self.data.expand_two.content.controle = None
+
 
     def start_connexion(self):
         if self.data.expand_one:
@@ -77,11 +81,11 @@ class AppCameraLive(MDApp):
 
     def add_tab(self, text):
         try:
-            print('top')
             self.data.index += 1
             tab = CardScrollImage(
-                text, self
+                self, text
                 )
+            tab.on_start()
             self.screenMain.ids.box_video.add_widget(tab) 
         except Exception as e:
             print(e)
@@ -140,6 +144,9 @@ class AppCameraLive(MDApp):
             print(f"start_source====>>>> {lancer}")
             if not cam:
                 self.data.listCam.append((text, lancer))
+                if self.data.define_session:
+                    insert_sql = "INSERT INTO camlists (cam_label, save, format, fk_session) VALUES (?, ?, ?, ?)"
+                    self.data.db_manager.insert_data(insert_sql, (text, True, "", self.data.define_session[0]))
 
     def affiche_format(self):
        
@@ -185,8 +192,12 @@ class AppCameraLive(MDApp):
     def listaudio(self):
         self.dropdown3.open()
 
-    def listcamera(self):
-        self.dropdown2.open()
+    def listcamera(self, cam=None):
+        if cam:
+            dropdown5 = MDDropdownMenu(md_bg_color="#bdc6b0",items=self.menu_items_camera, width_mult=3, caller=cam.ids.list_camera)
+            dropdown5.open()
+        else:
+            self.dropdown2.open()
 
 
     def selectDropdown(self, text):
@@ -221,6 +232,9 @@ class AppCameraLive(MDApp):
     
     def stop_connect_live_box(self):
         self.data.connectLiveController.stop()
+
+    def demarer_session(self):
+        pass
 
 app = AppCameraLive()
 app.run()

@@ -13,17 +13,19 @@ class DatabaseManager:
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
                     name TEXT NOT NULL,
-                    --profile TEXT DEFAULT NULL,
-                    password TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    password TEXT NOT NULL
                 );
 
                 CREATE TABLE IF NOT EXISTS sessions (
                     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    name TEXT NOT NULL,
                     created_at Date DEFAULT CURRENT_DATE,
                     update_at Date DEFAULT CURRENT_DATE,
                     fk_user INTEGER NOT NULL,
                     FOREIGN KEY(fk_user) REFERENCES users(id) ON DELETE CASCADE
                 );
+
                 CREATE TABLE IF NOT EXISTS configs (
                     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
                     path_storage TEXT DEFAULT NULL,
@@ -31,6 +33,7 @@ class DatabaseManager:
                     fk_session INTEGER NOT NULL,
                     FOREIGN KEY(fk_session) REFERENCES sessions(id) ON DELETE CASCADE
                 );
+
                 CREATE TABLE IF NOT EXISTS camlists (
                     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
                     cam_label TEXT DEFAULT NULL,
@@ -39,6 +42,7 @@ class DatabaseManager:
                     fk_session INTEGER NOT NULL,
                     FOREIGN KEY(fk_session) REFERENCES sessions(id) ON DELETE CASCADE
                 );
+
                 CREATE TABLE IF NOT EXISTS traitements (
                     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
                     cam_label TEXT DEFAULT NULL,
@@ -51,9 +55,10 @@ class DatabaseManager:
                 );
                 """
             self.cursor.execute("""
-			PRAGMA foreign_keys = ON
+			    PRAGMA foreign_keys = ON
 			""")
-            self.cursor.execute(create_table_sql)
+            self.cursor.executescript(create_table_sql)
+            print('create db')
         except sqlite3.Error as e:
             print(e)
 

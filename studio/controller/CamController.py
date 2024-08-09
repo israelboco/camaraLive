@@ -14,7 +14,8 @@ class CamController(CamCapture):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    async def add_start_video(self, text, screen, cam):
+    async def add_start_video(self, text, screen, cam, app):
+        self.app = app
         try:
             self.lien = text
             self.screen_video = screen
@@ -26,8 +27,8 @@ class CamController(CamCapture):
         try:
             if not self.videoCamera:
                 return toast('entrer url de la source')
-            self.screen_video.ids.cardImage.ids.play.icon = 'play'
-            self.screen_video.ids.cardImage.ids.bage_image.md_bg_color = '#fff000'
+            self.screen_video.ids.play.icon = 'play'
+            self.screen_video.ids.bage_image.md_bg_color = '#fff000'
             # self.videoCamera.on_break()
             self.timer = False
         except Exception as e:
@@ -40,8 +41,8 @@ class CamController(CamCapture):
             lancer = await self.lancer(cam, self.app)
             if not self.videoCamera:
                 return toast('Lien source invalide, verifier et rééssayer')
-            self.screen_video.ids.cardImage.ids.play.icon = 'pause'
-            self.screen_video.ids.cardImage.ids.bage_image.md_bg_color = '#00FF40'
+            self.screen_video.ids.play.icon = 'pause'
+            self.screen_video.ids.bage_image.md_bg_color = '#00FF40'
             self.timer = True
             self.countdown()
             return lancer
@@ -53,12 +54,12 @@ class CamController(CamCapture):
             if not self.videoCamera:
                 return toast('aucun camera en cours de lecture')
             try:
-                print(self.screen_video.app.data.listCam)
+                print(self.app.data.listCam)
                 print(self.videoCamera, self.lien)
-                self.screen_video.app.data.listCam.remove((self.lien, self.videoCamera))
+                self.app.data.listCam.remove((self.lien, self.videoCamera))
             except Exception as e:
                 print(e)
-            self.screen_video.ids.cardImage.ids.bage_image.md_bg_color = '#FF0000'
+            self.screen_video.ids.bage_image.md_bg_color = '#FF0000'
             if mix:
                 self.stop_video(True)
             else:
@@ -104,7 +105,7 @@ class CamController(CamCapture):
         try:
             if not self.videoCamera:
                 return toast('La cam principe ne peux pas basculer sur ce camera')
-            cam = self.screen_video.app.data.camController.init_on_switch(self.videoCamera)
+            cam = self.app.data.camController.init_on_switch(self.videoCamera)
             print(cam)
         except Exception as e:
             print(e)
@@ -113,7 +114,7 @@ class CamController(CamCapture):
         if self.timer:
             mins, secs = divmod(self.seconds, 60)
             timer = '{:02d}:{:02d}:{:02d}'.format(self.hour, mins, secs)
-            self.screen_video.ids.cardImage.lecture.text = "[color=#ffffff]" + str(timer) + "[/color]" 
+            self.screen_video.lecture.text = "[color=#ffffff]" + str(timer) + "[/color]" 
             self.seconds += 1
             if self.seconds == 3600:
                 self.seconds = 0

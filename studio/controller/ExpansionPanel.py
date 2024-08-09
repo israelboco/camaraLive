@@ -80,6 +80,10 @@ class ClickableTextFieldRound(MDRelativeLayout):
     text = StringProperty()
     hint_text = StringProperty()
 
+class ClickableTextFieldRoundRedute(MDRelativeLayout):
+    text = StringProperty()
+    hint_text = StringProperty()
+
 
 class ClickableTextFieldRoundCam(MDRelativeLayout):
     text = StringProperty()

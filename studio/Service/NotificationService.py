@@ -4,6 +4,8 @@ from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.button import MDRectangleFlatButton
 from studio.constants.GetNetworks import GetNetworks
 from kivymd.toast import toast
+from kivymd.uix.relativelayout import MDRelativeLayout
+from kivy.properties import StringProperty
 
 
 class NotificationService:
@@ -150,3 +152,15 @@ class AddCamBox(MDBoxLayout):
 
 class Connexion(MDBoxLayout):
     pass
+
+
+class Compte(MDBoxLayout):
+    pass
+
+
+class TextFieldRound(MDRelativeLayout):
+    text = StringProperty()
+    hint_text = StringProperty()
+    
+    def affiche_session(self):
+        self.app.data.session_list(self.text_field)

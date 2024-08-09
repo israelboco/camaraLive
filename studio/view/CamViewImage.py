@@ -19,7 +19,7 @@ class CamViewImage:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
     
-    async def on_start_video(self):
+    async def on_start_video(self, text):
         self.ids.spinner.active = True
         await asynckivy.sleep(2)
         if self.camController.videoCamera:
@@ -44,6 +44,10 @@ class CamViewImage:
                 asynckivy.start(self.app.start_source(text))
             if not cam:
                 self.app.listCam.append((text, lancer))
+                if self.app.data.define_session:
+                    insert_sql = "INSERT INTO camlists (cam_label, save, format, fk_session) VALUES (?, ?, ?, ?)"
+                    self.app.data.db_manager.insert_data(insert_sql, (text, True, "", self.app.data.define_session[0]))
+                
 
     def affiche_format(self):
         if not self.dropdown:

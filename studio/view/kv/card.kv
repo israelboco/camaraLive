@@ -171,9 +171,9 @@
                     theme_icon_color: "Custom"
                     icon_color: "#4287f5"
                     pos_hint: {"center_y": .65}
-                    on_release: app.listcamera()
+                    on_release: app.listcamera(self)
 
-                ClickableTextFieldRound:
+                ClickableTextFieldRoundRedute:
                     id: lien
                     size_hint_x: None
                     width: dp(500)
@@ -192,6 +192,7 @@
                 spacing: dp(10)
 
                 Image:
+                    id: i_source
                     size_hint: .7, .9
                     pos_hint: {"center_y": .5}
                 
@@ -203,6 +204,8 @@
                     theme_icon_color: "Custom"
                     icon_color: "#4287f5"
                     pos_hint: {"center_y": .5}
+                    on_release: 
+                        root.file_manager_open()
 
                 MDBoxLayout:
                     orientation: "vertical"
@@ -256,7 +259,7 @@
     size_hint_y: None
     height: dp(180)
     on_release:
-        app.start_card_view()
+        app.start_card_view(self)
 
     MDBoxLayout:
         md_bg_color: "#676767"
@@ -317,7 +320,6 @@
                 pos_hint:{"center_x": .94, "center_y": .5}
                 on_release:
                     # if self.icon == 'play' root.camController.on_play() else root.camController.on_break()
-
 
         Image:
             id: image

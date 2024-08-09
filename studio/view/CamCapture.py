@@ -100,14 +100,14 @@ class CamCapture:
                     self.frames_to_record = []
                 if self.frames_to_record:
                     asynckivy.start(self.cameraVideo.update_enregistrer(self.frames_to_record))  
-            time(1)              
+            time.sleep(1 / 5)              
 
     
     def traitement_update(self):
         if self.videoCamera:
             # Lire une image depuis le flux vidéo
-            self.resource_traitement_cam_thread = Thread(target=self.traitement_cam_thread)
-            self.resource_traitement_cam_thread.start()
+            self.resource_traitement_cam_thread = self.app.data.manager.start_thread(self.traitement_cam_thread)
+            # self.resource_traitement_cam_thread.start()
     
     def traitement_cam_thread(self):
         pass
