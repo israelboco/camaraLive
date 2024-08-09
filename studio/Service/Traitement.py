@@ -3,18 +3,93 @@ import numpy as np
 
 
 class Traitement:
+    # Chemins vers les fichiers YOLO
+    #config_path = 'yolov3.cfg'
+    #weights_path = 'yolov3.weights'
+    #names_path = 'coco.names'
+    config_path = ''
+    weights_path = ''
+    names_path = ''
+    net = None
+    layer_names = None
+    output_layers = None
+
+
+    def __init__(self, *args, **kwargs):
+        # Charger le modèle YOLO
+        try:
+            self.net = cv2.dnn.readNet(self.weights_path, self.config_path)
+            self.layer_names = self.net.getLayerNames()
+            self.output_layers = [self.layer_names[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
+        except Exception as e:
+            print(e)
+
 
     def object_dection(self, path):
-        # Charger l'image de référence
-        image_ref = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-        blurred = cv2.GaussianBlur(image_ref, (5, 5), 0)
-        edges = cv2.Canny(blurred, 50, 150)
+        try:
+            image = cv2.imread(path)
+            height, width, channels = image.shape
 
-        # Trouver les contours dans l'image de référence
-        contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            # Prétraitement de l'image
+            blob = cv2.dnn.blobFromImage(image, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
+            self.net.setInput(blob)
+            outputs = self.net.forward(self.output_layers)
 
-        sift = cv2.SIFT_create()
-        keypoints, descriptors = sift.detectAndCompute(image_ref, None)
+            class_ids = []
+            confidences = []
+            boxes = []
+
+            # Traitement des résultats
+            for output in outputs:
+                for detection in output:
+                    for obj in detection:
+                        scores = obj[5:]
+                        class_id = np.argmax(scores)
+                        confidence = scores[class_id]
+                        if confidence > 0.5:
+                            center_x = int(obj[0] * width)
+                            center_y = int(obj[1] * height)
+                            w = int(obj[2] * width)
+                            h = int(obj[3] * height)
+                            x = int(center_x - w / 2)
+                            y = int(center_y - h / 2)
+                            boxes.append([x, y, w, h])
+                            confidences.append(float(confidence))
+                            class_ids.append(class_id)
+
+            indices = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
+            detected_objects = []
+            for i in indices:
+                i = i[0]
+                box = boxes[i]
+                detected_objects.append(box)
+
+            return detected_objects
+
+        except Exception as e:
+            print(e)
+            detected_objects = ""
+
+        return detected_objects
+    
+    def object_dectionz(self, path):
+        try:
+            # Charger l'image fournie
+            image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+
+            # Initialiser le détecteur ORB (ou utiliser SIFT/SURF si disponible)
+            orb = cv2.ORB_create()
+
+            # Trouver les points clés et les descripteurs dans l'image
+            keypoints, descriptors = orb.detectAndCompute(image, None)
+
+            # Afficher les points clés détectés
+            image_keypoints = cv2.drawKeypoints(image, keypoints, None, color=(0, 255, 0))
+        except Exception as e:
+            print(e)
+            image_keypoints = ""
+
+        return image_keypoints
 
 
     def start(self):

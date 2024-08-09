@@ -22,7 +22,6 @@ from studio.view.CardAudio import CardAudio
 from studio.view.MyProcess import MyProcess
 from studio.view.ScreenMain import MainScreenView,  ScreenMain
 from kivymd.icon_definitions import md_icons
-
 from studio.view.TabVideos import CardScrollImage
 
 
@@ -55,12 +54,12 @@ class AppCameraLive(MDApp):
         if self.data.expand_two:
             self.screenMain.ids.two_widget.add_widget(self.data.expansion.expand_two)
             self.data.expand_two = False
-            self.data.expand_two.content.controle = controle
-            self.data.expand_two.content.start()
+            self.data.expansion.expand_two.content.controle = controle
+            self.data.expansion.expand_two.content.start()
         else:
             self.screenMain.ids.two_widget.remove_widget(self.data.expansion.expand_two)
             self.data.expand_two = True
-            self.data.expand_two.content.controle = None
+            self.data.expansion.expand_two.content.controle = None
 
 
     def start_connexion(self):
@@ -82,9 +81,7 @@ class AppCameraLive(MDApp):
     def add_tab(self, text):
         try:
             self.data.index += 1
-            tab = CardScrollImage(
-                self, text
-                )
+            tab = CardScrollImage(id=str(self.data.index), app=self, text=text)
             tab.on_start()
             self.screenMain.ids.box_video.add_widget(tab) 
         except Exception as e:
@@ -134,7 +131,7 @@ class AppCameraLive(MDApp):
             if text == listText:
                 cam = content[1]
                 break
-        lancer = await self.data.camController.add_start_video(text, self.screenMain, cam)
+        lancer = await self.data.camController.add_start_video(text, self.screenMain, cam, self)
         if not lancer:
             return
         if not self.data.connectLiveController:

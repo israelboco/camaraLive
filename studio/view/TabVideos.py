@@ -10,7 +10,6 @@ from studio.enum.FormatEnum import FormatEnum
 from studio.view.CamCapture import CamCapture
 from kivymd.toast import toast
 from threading import Thread
-
 from studio.view.CamViewImage import CamViewImage
 
 
@@ -47,7 +46,7 @@ class CardScrollImage(MDCard):
             if not self.app.data.camController.videoCamera:
                 asynckivy.start(self.app.start_source(text))
             if not cam:
-                self.app.listCam.append((text, lancer))
+                self.app.data.listCam.append((text, lancer))
                 if self.app.data.define_session:
                     insert_sql = "INSERT INTO camlists (cam_label, save, format, fk_session) VALUES (?, ?, ?, ?)"
                     self.app.data.db_manager.insert_data(insert_sql, (text, True, "", self.app.data.define_session[0]))

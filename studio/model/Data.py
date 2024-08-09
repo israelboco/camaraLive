@@ -14,7 +14,6 @@ from kivy.properties import StringProperty
 from kivymd.uix.list import OneLineAvatarListItem
 
 
-
 class Data:
     index = 1
     listProces = []

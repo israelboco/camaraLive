@@ -8,6 +8,7 @@ from kivymd.uix.behaviors.focus_behavior import FocusBehavior
 from studio.Service.NotificationService import NotificationService
 from tkinter import filedialog
 from kivymd.uix.filemanager import MDFileManager
+from kivymd.toast import toast
 
 
 class ScreenMain(MDScreen):
@@ -54,6 +55,9 @@ class CardReducteImage(MDCard, FocusBehavior):
             preview=True
         )
 
+    def start(self):
+        pass
+
     def file_manager_open(self):
         
         path = filedialog.askopenfilename( 
@@ -62,7 +66,15 @@ class CardReducteImage(MDCard, FocusBehavior):
             filetypes=(("Media files", "*.*"), ("All files", "*.*"))
         )
         # self.ids.image.source = path
-        self.ids.image.source = self.data.traitement.object_dection(path)
+        source = self.app.data.traitement.object_dection(path)
+        try:
+            if not source:
+                self.ids.i_source.source = path
+                return toast("Image invalide")
+            print(source)
+            self.ids.i_source.source = path
+        except Exception as e:
+            print(e)
 
     def select_path(self, path):
         self.exit_manager()

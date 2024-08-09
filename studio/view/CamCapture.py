@@ -67,6 +67,7 @@ class CamCapture:
         await asynckivy.sleep(0.8)
         if not cam:
             if self.videoCamera is None:
+                print(self.lien)
                 await self.cameraVideo.afficheCamara(self.lien)
                 await asynckivy.sleep(1.5)
                 self.videoCamera = self.cameraVideo.video_Camera
@@ -124,7 +125,11 @@ class CamCapture:
                 image_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
                 image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                 # display image from the texture
-                self.screen_video.ids.cardImage.image.texture = image_texture
+                try:
+                    self.screen_video.ids.cardImage.image.texture = image_texture
+                except Exception as e:
+                    self.screen_video.ids.image.texture = image_texture
+                    print(e)
                 if self.capture == 1 or self.capture == 2:
                     name = str(self.capture) + "_" + datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
                     self.save_frame_camera_key("enregistrement/capture", 'capture', name, frame)
