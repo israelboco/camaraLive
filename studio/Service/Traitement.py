@@ -1,76 +1,129 @@
 import cv2
+import math
+from ultralytics import YOLO
 import numpy as np
 
-
 class Traitement:
-    # Chemins vers les fichiers YOLO
-    #config_path = 'yolov3.cfg'
-    #weights_path = 'yolov3.weights'
-    #names_path = 'coco.names'
-    config_path = ''
-    weights_path = ''
-    names_path = ''
-    net = None
-    layer_names = None
-    output_layers = None
 
-
-    def __init__(self, *args, **kwargs):
-        # Charger le modèle YOLO
-        try:
-            self.net = cv2.dnn.readNet(self.weights_path, self.config_path)
-            self.layer_names = self.net.getLayerNames()
-            self.output_layers = [self.layer_names[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
-        except Exception as e:
-            print(e)
-
+    model = YOLO('../YOLO Weights/yolov8n.pt')
+    classNames = [
+        "personne",
+        "vélo",
+        "voiture",
+        "moto",
+        "avion",
+        "bus",
+        "train",
+        "camion",
+        "bateau",
+        "feu de circulation",
+        "bouche d'incendie",
+        "panneau d'arrêt",
+        "parcmètre",
+        "banc",
+        "oiseau",
+        "chat",
+        "chien",
+        "cheval",
+        "mouton",
+        "vache",
+        "éléphant",
+        "ours",
+        "zèbre",
+        "girafe",
+        "sac à dos",
+        "parapluie",
+        "sac à main",
+        "cravate",
+        "valise",
+        "frisbee",
+        "skis",
+        "snowboard",
+        "ballon de sport",
+        "cerf-volant",
+        "batte de base-ball",
+        "gant de baseball",
+        "skateboard",
+        "planche de surf",
+        "raquette de tennis",
+        "bouteille",
+        "verre à vin",
+        "tasse",
+        "fourchette",
+        "couteau",
+        "cuillère",
+        "bol",
+        "banane",
+        "pomme",
+        "sandwich",
+        "orange",
+        "brocoli",
+        "carotte",
+        "hot-dog",
+        "pizza",
+        "beignet",
+        "gâteau",
+        "chaise",
+        "canapé",
+        "plante en pot",
+        "lit",
+        "table à manger",
+        "toilettes",
+        "écran de télévision",
+        "ordinateur portable",
+        "souris",
+        "télécommande",
+        "clavier",
+        "téléphone portable",
+        "micro-ondes",
+        "four",
+        "grille-pain",
+        "évier",
+        "réfrigérateur",
+        "livre",
+        "horloge",
+        "vase",
+        "ciseaux",
+        "ours en peluche",
+        "sèche-cheveux",
+        "brosse à dents"
+    ]
 
     def object_dection(self, path):
         try:
-            image = cv2.imread(path)
-            height, width, channels = image.shape
+            img = cv2.imread(path)
+            results = self.model(img, stream=True)
+            for r in results:
+                boxes = r.boxes
+                for box in boxes:
+                    x1, y1, x2, y2 = box.xyxy[0]
+                    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                    w, h = x2 - x1, y2 - y1
+                    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-            # Prétraitement de l'image
-            blob = cv2.dnn.blobFromImage(image, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
-            self.net.setInput(blob)
-            outputs = self.net.forward(self.output_layers)
+                    conf = math.ceil((box.conf[0] * 100)) / 100
+                    cls = box.cls[0]
+                    name = self.classNames[int(cls)]
 
-            class_ids = []
-            confidences = []
-            boxes = []
+                    # Prepare text
+                    text = f'{name} {conf}'
 
-            # Traitement des résultats
-            for output in outputs:
-                for detection in output:
-                    for obj in detection:
-                        scores = obj[5:]
-                        class_id = np.argmax(scores)
-                        confidence = scores[class_id]
-                        if confidence > 0.5:
-                            center_x = int(obj[0] * width)
-                            center_y = int(obj[1] * height)
-                            w = int(obj[2] * width)
-                            h = int(obj[3] * height)
-                            x = int(center_x - w / 2)
-                            y = int(center_y - h / 2)
-                            boxes.append([x, y, w, h])
-                            confidences.append(float(confidence))
-                            class_ids.append(class_id)
+                    # Calculate text width & height
+                    (text_width, text_height), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
 
-            indices = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
-            detected_objects = []
-            for i in indices:
-                i = i[0]
-                box = boxes[i]
-                detected_objects.append(box)
+                    # Draw filled rectangle background for text
+                    cv2.rectangle(img, (x1, y1 - text_height - 10), (x1 + text_width, y1), (0, 255, 0), -1)
 
-            return detected_objects
+                    # Put text above the rectangle
+                    cv2.putText(img, text, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+
+            return img
 
         except Exception as e:
             print(e)
-            detected_objects = ""
+            img = None
 
-        return detected_objects
+        return img
     
     def object_dectionz(self, path):
         try:

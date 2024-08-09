@@ -20,7 +20,7 @@ from studio.view.CamCapture import CamCapture
 from studio.view.CameraFrame import Camera
 from studio.view.CardAudio import CardAudio
 from studio.view.MyProcess import MyProcess
-from studio.view.ScreenMain import MainScreenView,  ScreenMain
+from studio.view.ScreenMain import MainScreenView, ScreenMain
 from kivymd.icon_definitions import md_icons
 from studio.view.TabVideos import CardScrollImage
 

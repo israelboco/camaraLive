@@ -9,6 +9,9 @@ from studio.Service.NotificationService import NotificationService
 from tkinter import filedialog
 from kivymd.uix.filemanager import MDFileManager
 from kivymd.toast import toast
+import cv2
+from kivy.clock import Clock
+from kivy.core.image import Texture
 
 
 class ScreenMain(MDScreen):
@@ -72,7 +75,11 @@ class CardReducteImage(MDCard, FocusBehavior):
                 self.ids.i_source.source = path
                 return toast("Image invalide")
             print(source)
-            self.ids.i_source.source = path
+            buf1 = cv2.flip(source, 0)
+            buf = buf1.tostring()
+            image_texture = Texture.create(size=(source.shape[1], source.shape[0]), colorfmt='bgr')
+            image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+            self.ids.i_source.texture = image_texture
         except Exception as e:
             print(e)
 
