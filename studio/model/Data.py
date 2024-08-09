@@ -42,6 +42,8 @@ class Data:
         self.db_manager = DatabaseManager("camlive.db")
         self.traitement = Traitement()
     
+    def connexion_sessions(self, dt):
+        self.sessions()
 
     def sessions(self):
         if not self.dialogConnexionBox:
@@ -195,7 +197,7 @@ class Data:
                                 text="Connexion",
                                 theme_text_color="Custom",
                                 text_color=self.app.theme_cls.primary_color,
-                                on_release=self.sessions
+                                on_release=self.connexion_sessions
                             ),
                         ],
                 )

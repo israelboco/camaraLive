@@ -6,6 +6,7 @@ from studio.constants.GetNetworks import GetNetworks
 from kivymd.toast import toast
 from kivymd.uix.relativelayout import MDRelativeLayout
 from kivy.properties import StringProperty
+from tkinter import filedialog
 
 
 class NotificationService:
@@ -79,8 +80,29 @@ class NotificationService:
                     pos_hint={'center_x': .75,'center_y': .75},
                     size_hint_x=.3,
                     size_hint_y=.2,
+                    buttons=[
+                        MDRectangleFlatButton(
+                            text="Enregistrer",
+                            theme_text_color="Custom",
+                            text_color="5AA6FF",
+                            on_release=self.enregister
+                        ),
+                    ],
             )
         self.dialogOpenPramBox.open()
+    
+    def enregister(self, dt):
+        text = self.dialogOpenPramBox.content_cls.ids.text_field.text
+        if self.dialogOpenPramBox.content_cls.app.data.define_session:
+            select_stockage_sql = "SELECT * FROM configs WHERE name=? AND fk_session=?"
+            stockage = self.dialogOpenPramBox.content_cls.app.data.db_manager.fetch_data(select_stockage_sql, ("stockage", self.dialogOpenPramBox.content_cls.app.data.define_session[0]))
+            if not stockage:
+                insert_sql = "INSERT INTO configs (name, reference, fk_session) VALUES (?, ?, ?)"
+                self.dialogOpenPramBox.content_cls.app.data.db_manager.insert_data(insert_sql, ("stockage", text, self.dialogOpenPramBox.content_cls.app.data.define_session[0]))
+            else:
+                update_sql = "UPDATE configs SET reference = ? WHERE name = ? AND fk_session = ?"
+                self.dialogOpenPramBox.content_cls.app.data.db_manager.update_data(update_sql, (text, "stockage", self.dialogOpenPramBox.content_cls.app.data.define_session[0]))
+        
 
 
 class ConnectLiveBox(MDBoxLayout):
@@ -98,7 +120,10 @@ class ConnectLiveBox(MDBoxLayout):
             self.app.stop_connect_live_box()
 
 class ParamBox(MDBoxLayout):
-    pass
+    
+    def folder_manager_open(self):
+        path = filedialog.askdirectory( )
+        self.ids.text_field.text = path     
 
 
 class AddCamBox(MDBoxLayout):

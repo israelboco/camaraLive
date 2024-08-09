@@ -136,6 +136,7 @@
   
 
 <ParamBox>:
+    app: app
     size_hint_y: None
     height: dp(100)
     # width: dp(100)
@@ -165,13 +166,19 @@
                     text: 'root.text'
                     helper_text_mode: "on_focus"
 
-                MDRectangleFlatButton:
-                    text: 'parcourir'
+                IconButtonAction:
+                    icon: "import"
+                    icon_size: dp(20)
+                    style: "tonal"
+                    theme_bg_color: "Custom"
+                    theme_icon_color: "Custom"
+                    icon_color: "#4287f5"
+                    pos_hint: {"center_y": .5}
                     on_release: 
-                    # root.file_manager_open()
+                        root.folder_manager_open()
 
-            MDRectangleFlatButton:
-                text: 'Enregistrer'
-                pos_hint: {"center_y": .5}
-                on_release: 
+            # MDRectangleFlatButton:
+            #     text: 'Enregistrer'
+            #     pos_hint: {"center_y": .5}
+            #     on_release: 
                 # root.file_manager_open()

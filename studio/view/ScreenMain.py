@@ -98,10 +98,5 @@ class MainScreenView(MDScreenManager):
 
 class AProposBox(MDBoxLayout):
           
-    def __init__(self, dialog, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.dialog = dialog
-    
-    def open_cam(self):
-        self.app.add_tab()
-        self.dialog.dimiss()

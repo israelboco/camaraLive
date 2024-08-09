@@ -200,6 +200,15 @@ class AppCameraLive(MDApp):
     def selectDropdown(self, text):
         self.screenMain.ids.label_format.text = "[color=#4287f5]format :" + str(text.value) + "[/color]"
         self.data.camController.select_format(text.value)
+        if self.data.define_session:
+            select_format_sql = "SELECT * FROM configs WHERE name=? AND fk_session=?"
+            format = self.data.db_manager.fetch_data(select_format_sql, ("format", self.data.define_session[0]))
+            if not format:
+                insert_sql = "INSERT INTO configs (name, reference, fk_session) VALUES (?, ?, ?)"
+                self.data.db_manager.insert_data(insert_sql, ("format", text.value, self.data.define_session[0]))
+            else:
+                update_sql = "UPDATE configs SET reference = ? WHERE name = ? AND fk_session = ?"
+                self.data.db_manager.update_data(update_sql, (text, "format", self.data.define_session[0]))
         if self.dropdown1:
             self.dropdown1.dismiss()
     
@@ -216,6 +225,15 @@ class AppCameraLive(MDApp):
     def selectDropdownAudio(self, text):
         self.screenMain.ids.audio.text = str("[color=#4287f5]" + text + "[/color]")
         # self.camController.start_source(text)
+        if self.data.define_session:
+            select_audio_sql = "SELECT * FROM configs WHERE name=? AND fk_session=?"
+            audio = self.data.db_manager.fetch_data(select_audio_sql, ("audio", self.data.define_session[0]))
+            if not audio:
+                insert_sql = "INSERT INTO configs (name, reference, fk_session) VALUES (?, ?, ?)"
+                self.data.db_manager.insert_data(insert_sql, ("audio", text, self.data.define_session[0]))
+            else:
+                update_sql = "UPDATE configs SET reference = ? WHERE name = ? AND fk_session = ?"
+                self.data.db_manager.update_data(update_sql, (text, "audio", self.data.define_session[0]))
         if self.dropdown3:
             self.dropdown3.dismiss()
      

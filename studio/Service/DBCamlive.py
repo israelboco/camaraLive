@@ -26,10 +26,11 @@ class DatabaseManager:
                     FOREIGN KEY(fk_user) REFERENCES users(id) ON DELETE CASCADE
                 );
 
+                --DROP TABLE IF EXISTS configs;
                 CREATE TABLE IF NOT EXISTS configs (
                     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-                    path_storage TEXT DEFAULT NULL,
-                    audio TEXT DEFAULT NULL,
+                    name TEXT DEFAULT NULL,
+                    reference TEXT DEFAULT NULL,
                     fk_session INTEGER NOT NULL,
                     FOREIGN KEY(fk_session) REFERENCES sessions(id) ON DELETE CASCADE
                 );
