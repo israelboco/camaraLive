@@ -1,6 +1,6 @@
 import cv2
 import math
-from ultralytics import YOLO
+#from ultralytics import YOLO
 import numpy as np
 from kivy.graphics.texture import Texture
 from kivymd.utils import asynckivy
@@ -10,7 +10,7 @@ from kivymd.toast import toast
 
 class Traitement:
  
-    model = YOLO('../YOLO Weights/yolov8n.pt')
+    #model = YOLO('../YOLO Weights/yolov8n.pt')
     classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", 
               "truck", "boat", "traffic light", "fire hydrant", "stop sign", "parking meter",
               "bench", "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear",
@@ -60,46 +60,46 @@ class Traitement:
                 return (id, target, gry_target)
         return None
         
-    async def object_detection(self, path):
-        try:
-            img = cv2.imread(path)
-            results = self.model(img, stream=True)
-            for r in results:
-                await asynckivy.sleep(0) 
-                boxes = r.boxes
-                for box in boxes:
-                    x1, y1, x2, y2 = box.xyxy[0]
-                    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-                    w, h = x2 - x1, y2 - y1
-                    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    # async def object_detection(self, path):
+    #     try:
+    #         img = cv2.imread(path)
+    #         results = self.model(img, stream=True)
+    #         for r in results:
+    #             await asynckivy.sleep(0) 
+    #             boxes = r.boxes
+    #             for box in boxes:
+    #                 x1, y1, x2, y2 = box.xyxy[0]
+    #                 x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+    #                 w, h = x2 - x1, y2 - y1
+    #                 cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-                    conf = math.ceil((box.conf[0] * 100)) / 100
-                    cls = box.cls[0]
-                    name = self.classNames[int(cls)]
+    #                 conf = math.ceil((box.conf[0] * 100)) / 100
+    #                 cls = box.cls[0]
+    #                 name = self.classNames[int(cls)]
 
-                    # Préparation du texte
-                    text = f'{name} {conf}'
+    #                 # Préparation du texte
+    #                 text = f'{name} {conf}'
 
-                    # Calcul de la largeur et de la hauteur du texte
-                    (text_width, text_height), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+    #                 # Calcul de la largeur et de la hauteur du texte
+    #                 (text_width, text_height), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
 
-                    # Dessiner le rectangle de fond pour le texte
-                    cv2.rectangle(img, (x1, y1 - text_height - 10), (x1 + text_width, y1), (0, 255, 0), -1)
+    #                 # Dessiner le rectangle de fond pour le texte
+    #                 cv2.rectangle(img, (x1, y1 - text_height - 10), (x1 + text_width, y1), (0, 255, 0), -1)
 
-                    # Placer le texte au-dessus du rectangle
-                    cv2.putText(img, text, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+    #                 # Placer le texte au-dessus du rectangle
+    #                 cv2.putText(img, text, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
 
-            # Conversion de l'image OpenCV en texture Kivy
-            buf1 = cv2.flip(img, 0)
-            buf = buf1.tobytes()
-            image_texture = Texture.create(size=(img.shape[1], img.shape[0]), colorfmt='bgr')
-            image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-            return image_texture
+    #         # Conversion de l'image OpenCV en texture Kivy
+    #         buf1 = cv2.flip(img, 0)
+    #         buf = buf1.tobytes()
+    #         image_texture = Texture.create(size=(img.shape[1], img.shape[0]), colorfmt='bgr')
+    #         image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+    #         return image_texture
 
-        except Exception as e:
-            print("object_detection ===>")
-            print(e)
-        return None
+    #     except Exception as e:
+    #         print("object_detection ===>")
+    #         print(e)
+    #     return None
 
 
     async def object_dectionz(self, path):

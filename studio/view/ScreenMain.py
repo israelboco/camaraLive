@@ -119,7 +119,7 @@ class CardReducteImage(MDCard, FocusBehavior):
             ret, frame = self.controle.camController.videoCamera.read()
             # Appeler récursivement la fonction update après un certain délai
             if ret:
-                source = await self.app.data.traitement.object_detection(frame)
+                source = await self.app.data.traitement.object_dectionz(frame)
                 try:
                     if not source:
                         self.ids.i_source.source = frame
