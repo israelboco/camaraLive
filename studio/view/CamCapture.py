@@ -128,7 +128,7 @@ class CamCapture:
                     self.screen_video.ids.cardImage.image.texture = image_texture
                 except Exception as e:
                     self.screen_video.ids.image.texture = image_texture
-                    print(e)
+                    #print(e)
                 if self.capture == 1 or self.capture == 2:
                     name = str(self.capture) + "_" + datetime.now().strftime("%A_%d_%B_%Y_%I_%M_%S")
                     self.save_frame_camera_key("enregistrement/capture", 'capture', name, frame)

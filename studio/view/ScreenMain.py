@@ -106,7 +106,7 @@ class CardReducteImage(MDCard, FocusBehavior):
             defaultextension=".jpg",
             filetypes=(("Image files", "*.jpg;*.jpeg;*.png;*.gif;*.bmp"), ("All files", "*.*"))
         )
-        self.ids.i_source.texture = path
+        self.ids.i_source.source = path
         self.controle.detect_path = path
 
     def detect_object(self, dt):
@@ -133,18 +133,21 @@ class CardReducteImage(MDCard, FocusBehavior):
     
     def lancerTraitement(self):
         if self.controle.type_objet and self.ids.lancer.text == "Lancer":
-            self.controle.type_persenne = False
+            self.controle.type_personne = False
             self.detect_object()
-        if self.controle.type_persenne and self.ids.lancer.text == "Lancer":
-            self.controle.type_persenne = False
+        if self.controle.type_personne and self.ids.lancer.text == "Lancer":
+            self.controle.type_objet = False
             self.controle.start_traint = True
             self.app.data.traitement.start_traint(self.controle)
-            asynckivy.start(self.app.data.traitement.start(self.controle.id))
+            self.app.data.traitement.start(self.controle.id)   
         if self.ids.lancer.text == "Lancer":
             self.ids.lancer.text = "Annuler"
         else:
             self.ids.lancer.text = "Lancer"
             self.controle.start_traint = False
+            self.controle.type_objet = False
+            self.controle.type_personne = False
+
 
     def afert(self, delay, func):
         Clock.schedule_once(func, delay)

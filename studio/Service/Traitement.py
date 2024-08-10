@@ -5,6 +5,8 @@ import numpy as np
 from kivy.graphics.texture import Texture
 from kivymd.utils import asynckivy
 from kivy.clock import Clock
+import time
+from kivymd.toast import toast
 
 class Traitement:
  
@@ -27,12 +29,15 @@ class Traitement:
         self.traints = []
         self.dirCascadeFiles = r'../opencv/haarcascades_cuda/'
         # Get files from openCV : https://github.com/opencv/opencv/tree/3.4/data/haarcascades
-        self.classCascadefacial = cv2.CascadeClassifier(self.dirCascadeFiles + "haarcascade_frontalface_default.xml")   
+        self.classCascadefacial = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")   
         self.gray_target = None
         self.encours = False
     
-    def person_detected(self, target):
+    async def person_detected(self, target):
         if not self.encours:
+            toast('la personne a été trouvé')
+            await asynckivy.sleep(0.5)
+            toast('la cam est en cours de basculer')
             target.camController.on_switch()
             Clock.schedule_once(self.update_encour, 60)
 
@@ -128,31 +133,37 @@ class Traitement:
         controle = self.find_target(id)
         if not controle:
             return
+        print("demare recherche")
         asynckivy.start(self.start_controle(controle))
  
     async def start_controle(self, controle):
-        target = controle[1]
-        gray_target = controle[2]
+        print(controle)
+        id, target, gray_target = controle
+
         if target.camController.videoCamera and target.type_personne:
             # Lire une image depuis le flux vidéo
             ret, frame = target.camController.videoCamera.read()
             # Appeler récursivement la fonction update après un certain délai
             if ret:
                 gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                if self.classCascadefacial.empty():
+                    print("Erreur : Le classificateur facial n'a pas été chargé correctement.")
+                    return
                 faces = self.classCascadefacial.detectMultiScale(gray_frame, scaleFactor=1.1, minNeighbors=5)
                 for (x, y, w, h) in faces:
+                    await asynckivy.sleep(0)
                     roi = gray_frame[y:y+h, x:x+w]
                     result = cv2.matchTemplate(roi, gray_target, cv2.TM_CCOEFF_NORMED)
                     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
                     if max_val > 0.8:
-                        self.person_detected(target)
+                        await self.person_detected(target)
                     top_left = max_loc
                     h, w = gray_target.shape
                     bottom_right = (top_left[0] + w, top_left[1] + h)
                     cv2.rectangle(frame, top_left, bottom_right, (255, 0, 0), 2)
                     cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
                     self.gray_target = frame
-
+                    
                 self.afert(1, self.start, target.id)
 
 
