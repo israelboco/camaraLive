@@ -28,16 +28,7 @@ class Traitement:
         self.dirCascadeFiles = r'../opencv/haarcascades_cuda/'
         # Get files from openCV : https://github.com/opencv/opencv/tree/3.4/data/haarcascades
         self.classCascadefacial = cv2.CascadeClassifier(self.dirCascadeFiles + "haarcascade_frontalface_default.xml")   
-        
-        # Chemins vers les fichiers YOLO
-        self.config_path = 'yolov3.cfg'
-        self.weights_path = 'yolov3.weights'
-        self.names_path = 'coco.names'
-
-        # Charger le modèle YOLO
-        self.net = cv2.dnn.readNet(self.weights_path, self.config_path)
-        self.layer_names = self.net.getLayerNames()
-        self.output_layers = [self.layer_names[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
+        self.gray_target = None
         self.encours = False
     
     def person_detected(self, target):

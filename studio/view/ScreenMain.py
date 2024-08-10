@@ -89,12 +89,13 @@ class CardReducteImage(MDCard, FocusBehavior):
     def on_checkbox_active(self, type, active):
         print(type)
         print(active)
-        if type == "Objet":
-            self.controle.type_objet = True
-            self.controle.type_personne = False
-        if type == "Personne":
-            self.controle.type_objet = False
-            self.controle.type_personne = True
+        if self.controle:
+            if type == "Objet":
+                self.controle.type_objet = True
+                self.controle.type_personne = False
+            if type == "Personne":
+                self.controle.type_objet = False
+                self.controle.type_personne = True
 
     def file_manager_open(self):
         if not self.controle.type_personne:
