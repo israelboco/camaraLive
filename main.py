@@ -88,12 +88,14 @@ class AppCameraLive(MDApp):
             print(e)
         self.affiche_audio()
 
-    def remove_tab(self):
+    def remove_tab(self, tab=None):
         if self.data.index > 1:
             self.data.index -= 1
+        tab.camController.on_stop()
         self.screenMain.ids.box_video.remove_widget(
-            self.screenMain.ids.box_video.get_tab_list()[-1]
+            tab
         )
+        self.affiche_audio()
 
     def on_ref_press(
             self,
@@ -189,12 +191,8 @@ class AppCameraLive(MDApp):
     def listaudio(self):
         self.dropdown3.open()
 
-    def listcamera(self, cam=None):
-        if cam:
-            dropdown5 = MDDropdownMenu(md_bg_color="#bdc6b0",items=self.menu_items_camera, width_mult=3, caller=cam.ids.list_camera)
-            dropdown5.open()
-        else:
-            self.dropdown2.open()
+    def listcamera(self):
+       self.dropdown2.open()
 
 
     def selectDropdown(self, text):

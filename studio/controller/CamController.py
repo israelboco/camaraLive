@@ -5,14 +5,14 @@ from kivy.clock import Clock
 
 
 class CamController(CamCapture):
-    format = None
-    timer = False
-    seconds = 0
-    hour = 0
-    app = None
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.format = None
+        self.timer = False
+        self.seconds = 0
+        self.hour = 0
+        self.app = None
 
     async def add_start_video(self, text, screen, cam, app):
         self.app = app

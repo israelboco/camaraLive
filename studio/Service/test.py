@@ -1,53 +1,75 @@
 import cv2
-import math
-from ultralytics import YOLO
 import numpy as np
 
-cap = cv2.VideoCapture(0)
-cap.set(3, 1280)
-cap.set(4, 720)
+# Chemins vers les fichiers YOLO
+config_path = 'yolov3.cfg'
+weights_path = 'yolov3.weights'
+names_path = 'coco.names'
 
-model = YOLO('../YOLO Weights/yolov8n.pt')
+# Charger le modèle YOLO
+net = cv2.dnn.readNet(weights_path, config_path)
+layer_names = net.getLayerNames()
+output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
-classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", 
-              "truck", "boat", "traffic light", "fire hydrant", "stop sign", "parking meter",
-              "bench", "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear",
-              "zebra", "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase",
-              "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat",
-              "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle",
-              "wine glass", "cup", "fork", "knife", "spoon", "bowl", "banana", "apple",
-              "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza", "donut", 
-              "cake", "chair", "sofa", "pottedplant", "bed", "diningtable", "toilet", 
-              "tvmonitor", "laptop", "mouse", "remote", "keyboard", "cell phone", 
-              "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", 
-              "vase", "scissors", "teddy bear", "hair drier", "toothbrush"]
+def detect_objects(image_path):
+    image = cv2.imread(image_path)
+    height, width, channels = image.shape
+
+    # Prétraitement de l'image
+    blob = cv2.dnn.blobFromImage(image, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
+    net.setInput(blob)
+    outputs = net.forward(output_layers)
+
+    class_ids = []
+    confidences = []
+    boxes = []
+
+    # Traitement des résultats
+    for output in outputs:
+        for detection in output:
+            for obj in detection:
+                scores = obj[5:]
+                class_id = np.argmax(scores)
+                confidence = scores[class_id]
+                if confidence > 0.5:
+                    center_x = int(obj[0] * width)
+                    center_y = int(obj[1] * height)
+                    w = int(obj[2] * width)
+                    h = int(obj[3] * height)
+                    x = int(center_x - w / 2)
+                    y = int(center_y - h / 2)
+                    boxes.append([x, y, w, h])
+                    confidences.append(float(confidence))
+                    class_ids.append(class_id)
+
+    indices = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
+    detected_objects = []
+    for i in indices:
+        i = i[0]
+        box = boxes[i]
+        detected_objects.append(box)
+
+    return detected_objects
+
+cap = cv2.VideoCapture(0)  # 0 pour la caméra par défaut
 
 while True:
-    success, img = cap.read()
-    results = model(img, stream=True)
-    for r in results:
-        boxes = r.boxes
-        for box in boxes:
-            x1, y1, x2, y2 = box.xyxy[0]
-            x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-            w, h = x2 - x1, y2 - y1
-            cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    ret, frame = cap.read()
+    if not ret:
+        break
 
-            conf = math.ceil((box.conf[0] * 100)) / 100
-            cls = box.cls[0]
-            name = classNames[int(cls)]
+    # Détection dans le flux vidéo
+    detected_objects = detect_objects(frame)
+    
+    # Affichage des objets détectés
+    for box in detected_objects:
+        x, y, w, h = box
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-            # Prepare text
-            text = f'{name} {conf}'
+    cv2.imshow('Video', frame)
 
-            # Calculate text width & height
-            (text_width, text_height), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
-            # Draw filled rectangle background for text
-            cv2.rectangle(img, (x1, y1 - text_height - 10), (x1 + text_width, y1), (0, 255, 0), -1)
-
-            # Put text above the rectangle
-            cv2.putText(img, text, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
-
-    cv2.imshow("Image", img)
-    cv2.waitKey(1)
+cap.release()
+cv2.destroyAllWindows()

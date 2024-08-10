@@ -14,14 +14,17 @@ from studio.view.CamViewImage import CamViewImage
 
 
 class CardScrollImage(MDCard):
-    dropdown = None
-    camController = CamController()
-    app = None
-
+    
     def __init__(self, app, text, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text = text
         self.app = app
+        self.dropdown = None
+        self.camController = CamController()
+        self.detect_path = None
+        self.type_objet = False
+        self.type_personne = True
+        self.start_traint = False
     
     def on_start(self):
         asynckivy.start(self.on_start_video(self.text))
@@ -50,7 +53,9 @@ class CardScrollImage(MDCard):
                 if self.app.data.define_session:
                     insert_sql = "INSERT INTO camlists (cam_label, save, format, fk_session) VALUES (?, ?, ?, ?)"
                     self.app.data.db_manager.insert_data(insert_sql, (text, True, "", self.app.data.define_session[0]))
-                
+    
+    def on_audio(self):
+        pass
 
     def affiche_format(self):
         if not self.dropdown:

@@ -1,3 +1,5 @@
+#:import asynckivy kivymd.utils.asynckivy
+
 <ContentExpandOne>:
     size_hint_y: .5
 
@@ -122,7 +124,7 @@
         adaptive_width: True
         on_release:
             print(root.id)
-                
+                 
     MDRelativeLayout:
         size_hint_x: None
         width: dp(20)
@@ -171,14 +173,14 @@
                     theme_icon_color: "Custom"
                     icon_color: "#4287f5"
                     pos_hint: {"center_y": .65}
-                    on_release: app.listcamera(self)
+                    on_release: root.listcamera()
 
                 ClickableTextFieldRoundRedute:
+                    cam_reduct: root
                     id: lien
-                    size_hint_x: None
-                    width: dp(500)
+                    adaptive_width: True
                     hint_text: "lien source"
-                    pos_hint: {"center_x": .5, "center_y": .65}
+                    pos_hint: {"center_x": .7, "center_y": .65}
             
             MDLabel:
                 text: "[color=#4287f5]Detection[/color]"
@@ -215,33 +217,36 @@
                         orientation: "horizontal"
 
                         MDLabel:
-                            text: "[color=#4287f5]Seul[/color]"
+                            text: "[color=#4287f5]Personne[/color]"
                             adaptive_size: True
                             markup: True
                         
                         CheckboxLeftWidget:
-                            id: check
+                            id: check_person
                             group: "check"
                             adaptive_size: True
+                            on_active: root.on_checkbox_active("Personne", self.active)
 
                     MDBoxLayout:
                         orientation: "horizontal"
 
                         MDLabel:
-                            text: "[color=#4287f5]Tout[/color]"
+                            text: "[color=#4287f5]Objet[/color]"
                             adaptive_size: True
                             markup: True
                         
                         CheckboxLeftWidget:
-                            id: check
+                            id: check_object
                             group: "check"
                             adaptive_size: True
+                            on_active: root.on_checkbox_active("Objet", self.active)
 
                 MDRectangleFlatButton:
+                    id: lancer
                     text: 'Lancer'
                     pos_hint: {"center_y": .5}
-                    on_release: 
-                    # root.file_manager_open()
+                    on_release:
+                        root.lancerTraitement()
                 
 
 
@@ -287,7 +292,7 @@
                 icon_color: "#4287f5"
                 pos_hint:{"center_x": .55, "center_y": .5}
                 on_release:
-                    # if self.icon == 'play' root.camController.on_play() else root.camController.on_break()
+                    root.camController.on_switch()
 
             IconButtonAction:
                 id: save
@@ -301,7 +306,7 @@
                 icon_color: "#4287f5"
                 pos_hint:{"center_x": .75, "center_y": .5}
                 on_release:
-                    # if self.icon == 'play' root.camController.on_play() else root.camController.on_break()
+                    root.camController.on_record()
              
             IconButtonAction:
                 id: close
@@ -315,7 +320,7 @@
                 icon_color: "#4287f5"
                 pos_hint:{"center_x": .94, "center_y": .5}
                 on_release:
-                    # if self.icon == 'play' root.camController.on_play() else root.camController.on_break()
+                    app.remove_tab(root)
 
         Image:
             id: image
@@ -342,7 +347,7 @@
                 theme_icon_color: "Custom"
                 icon_color: "#4287f5"
                 on_release:
-                    # if self.icon == 'play' root.camController.on_play() else root.camController.on_break()
+                    root.on_audio()
 
 
             IconButtonAction:

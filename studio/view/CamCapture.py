@@ -12,24 +12,24 @@ from studio.view.CameraFrame import Camera
 
 
 class CamCapture:
-    # Initialiser l'enregistrement à False
-    recording = False
-    record_demarage = False
-    # Liste pour stocker les images à enregistrer
-    frames_to_record = []
-    
-    videoCamera = None
-    audioCamera = None
-    app = None
 
-    cameraVideo = Camera()
-    
     def __init__(self, lien=None, screen_video=None, tab=None, **kwargs):
         super().__init__(**kwargs)
         self.tab = tab
         self.capture = 0
         self.lien = lien
         self.screen_video = screen_video
+        # Initialiser l'enregistrement à False
+        self.recording = False
+        self.record_demarage = False
+        # Liste pour stocker les images à enregistrer
+        self.frames_to_record = []
+        
+        self.videoCamera = None
+        self.audioCamera = None
+        self.app = None
+
+        self.cameraVideo = Camera()
 
 
     def captureCamera(self):
@@ -101,9 +101,8 @@ class CamCapture:
                     self.frames_to_record = []
                 if self.frames_to_record:
                     asynckivy.start(self.cameraVideo.update_enregistrer(self.frames_to_record))  
-            time.sleep(1 / 5)              
+            time.sleep(1 / 5)            
 
-    
     def traitement_update(self):
         if self.videoCamera:
             # Lire une image depuis le flux vidéo
