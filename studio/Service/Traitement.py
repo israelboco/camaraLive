@@ -9,26 +9,14 @@ import time
 from kivymd.toast import toast
 
 class Traitement:
- 
-    #model = YOLO('../YOLO Weights/yolov8n.pt')
-    classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", 
-              "truck", "boat", "traffic light", "fire hydrant", "stop sign", "parking meter",
-              "bench", "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear",
-              "zebra", "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase",
-              "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat",
-              "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle",
-              "wine glass", "cup", "fork", "knife", "spoon", "bowl", "banana", "apple",
-              "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza", "donut", 
-              "cake", "chair", "sofa", "pottedplant", "bed", "diningtable", "toilet", 
-              "tvmonitor", "laptop", "mouse", "remote", "keyboard", "cell phone", 
-              "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", 
-              "vase", "scissors", "teddy bear", "hair drier", "toothbrush"
-            ]
     
     def __init__(self):
+        self.net = cv2.dnn.readNet("./config/yolov3.weights", "./config/yolov3.cfg")
+        with open("./config/coco.names", "r") as f:
+            self.classes = [line.strip() for line in f.readlines()]
         self.traints = []
         # Get files from openCV : https://github.com/opencv/opencv/tree/3.4/data/haarcascades
-        self.classCascadefacial = cv2.CascadeClassifier("./studio/config/haarcascade_frontalface_default.xml")   
+        self.classCascadefacial = cv2.CascadeClassifier("./config/haarcascade_frontalface_default.xml")   
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         self.profile_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_profileface.xml')
         self.eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
@@ -37,8 +25,8 @@ class Traitement:
     
     async def person_detected(self, target):
         if not self.encours:
-            toast('la personne a été trouvé')
-            await asynckivy.sleep(0.5)
+            toast('Personne trouvée')
+            await asynckivy.sleep(1)
             toast('la cam est en cours de basculer')
             target.camController.on_switch()
             Clock.schedule_once(self.update_encour, 60)
@@ -108,21 +96,50 @@ class Traitement:
         try:
             # Charger l'image fournie
             image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-            await asynckivy.sleep(0)
+            height, width = image.shape[:2]
             # Initialiser le détecteur ORB (ou utiliser SIFT/SURF si disponible)
-            orb = cv2.ORB_create()
-            await asynckivy.sleep(0)
-            # Trouver les points clés et les descripteurs dans l'image
-            keypoints, descriptors = orb.detectAndCompute(image, None)
+            blob = cv2.dnn.blobFromImage(image, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
+            self.net.setInput(blob)
 
-            # Afficher les points clés détectés
-            image_keypoints = cv2.drawKeypoints(image, keypoints, None, color=(0, 255, 0))
-        
-            buf1 = cv2.flip(image_keypoints, 0)
+            layer_names = self.net.getLayerNames()
+            output_layers = [layer_names[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
+            outs = self.net.forward(output_layers)
+            boxes = []
+            class_ids = []
+            confidences = []
+            for out in outs:
+                await asynckivy.sleep(0)
+                for detection in out:
+                    scores = detection[5:]
+                    class_id = np.argmax(scores)
+                    confidence = scores[class_id]
+                    if confidence > 0.5:
+                        center_x = int(detection[0] * width)
+                        center_y = int(detection[1] * height)
+                        w = int(detection[2] * width)
+                        h = int(detection[3] * height)
+                        x = int(center_x - w / 2)
+                        y = int(center_y - h / 2)
+                        boxes.append([x, y, w, h])
+                        confidences.append(float(confidence))
+                        class_ids.append(class_id)
+
+                indices = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
+
+                for i in indices:
+                    await asynckivy.sleep(0)
+                    i = i[0]
+                    box = boxes[i]
+                    x, y, w, h = box[0], box[1], box[2], box[3]
+                    label = str(self.classes[class_ids[i]])
+                    cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                    cv2.putText(image, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+                # Conversion de l'image OpenCV en texture Kivy
+            buf1 = cv2.flip(image, 0)
             buf = buf1.tobytes()
-            image_texture = Texture.create(size=(image_keypoints.shape[1], image_keypoints.shape[0]), colorfmt='bgr')
+            image_texture = Texture.create(size=(image.shape[1], image.shape[0]), colorfmt='bgr')
             image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-
             return image_texture
 
         except Exception as e:
