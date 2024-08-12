@@ -27,9 +27,11 @@ class Traitement:
     
     def __init__(self):
         self.traints = []
-        self.dirCascadeFiles = r'../opencv/haarcascades_cuda/'
         # Get files from openCV : https://github.com/opencv/opencv/tree/3.4/data/haarcascades
-        self.classCascadefacial = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")   
+        self.classCascadefacial = cv2.CascadeClassifier("./studio/config/haarcascade_frontalface_default.xml")   
+        self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        self.profile_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_profileface.xml')
+        self.eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
         self.gray_target = None
         self.encours = False
     
@@ -149,15 +151,22 @@ class Traitement:
                 if self.classCascadefacial.empty():
                     print("Erreur : Le classificateur facial n'a pas été chargé correctement.")
                     return
-                faces = self.classCascadefacial.detectMultiScale(gray_frame, scaleFactor=1.1, minNeighbors=5)
+                # faces = self.classCascadefacial.detectMultiScale(gray_frame, scaleFactor=1.1, minNeighbors=5)
+                faces = self.face_cascade.detectMultiScale(gray_frame, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+                profiles = self.profile_cascade.detectMultiScale(gray_frame, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+                eyes = self.eye_cascade.detectMultiScale(gray_frame, scaleFactor=1.1, minNeighbors=5, minSize=(10, 10))
                 for (x, y, w, h) in faces:
                     await asynckivy.sleep(0)
                     roi = gray_frame[y:y+h, x:x+w]
-                    result = cv2.matchTemplate(roi, gray_target, cv2.TM_CCOEFF_NORMED)
-                    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
-                    if max_val > 0.8:
+                    result_face = cv2.matchTemplate(roi, gray_target, cv2.TM_CCOEFF_NORMED)
+                    result_profile = cv2.matchTemplate(roi, gray_target, cv2.TM_CCOEFF_NORMED)
+                    result_eyes = cv2.matchTemplate(roi, gray_target, cv2.TM_CCOEFF_NORMED)
+                    min_val_face, max_val_face, min_loc_face, max_loc_face = cv2.minMaxLoc(result_face)
+                    min_val_profile, max_val_profile, min_loc_profile, max_loc_profile = cv2.minMaxLoc(result_profile)
+                    min_val_eyes, max_val_eyes, min_loc_eyes, max_loc_eyes = cv2.minMaxLoc(result_eyes)
+                    if max_val_face > 0.8 and max_val_profile > 0.8 and max_val_eyes > 0.8:
                         await self.person_detected(target)
-                    top_left = max_loc
+                    top_left = max_loc_face
                     h, w = gray_target.shape
                     bottom_right = (top_left[0] + w, top_left[1] + h)
                     cv2.rectangle(frame, top_left, bottom_right, (255, 0, 0), 2)
