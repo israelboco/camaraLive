@@ -19,6 +19,7 @@ class CamController(CamCapture):
         try:
             self.lien = text
             self.screen_video = screen
+            print(self.lien)
             return await self.on_play(cam)
         except Exception as e:
             print(e)
@@ -38,8 +39,11 @@ class CamController(CamCapture):
         try:
             if not self.screen_video:
                 return toast('entrer url de la source')
+            print(self.lien)
             lancer = await self.lancer(cam, self.app)
-            if not self.videoCamera:
+            ret, frame = self.videoCamera.read()
+            if not ret:
+                self.videoCamera = None
                 return toast('Lien source invalide, verifier et rééssayer')
             self.screen_video.ids.play.icon = 'pause'
             self.screen_video.ids.bage_image.md_bg_color = '#00FF40'
@@ -54,8 +58,6 @@ class CamController(CamCapture):
             if not self.videoCamera:
                 return toast('aucun camera en cours de lecture')
             try:
-                print(self.app.data.listCam)
-                print(self.videoCamera, self.lien)
                 self.app.data.listCam.remove((self.lien, self.videoCamera))
             except Exception as e:
                 print(e)
@@ -74,7 +76,6 @@ class CamController(CamCapture):
         try:
             if not self.videoCamera:
                 return toast('aucun camera en cours de lecture')
-            print(self.screen_video.ids.save.unfocus_color)
             if not self.recording:
                 self.enregistrer()
                 self.screen_video.ids.save.unfocus_color = '#00FF40'

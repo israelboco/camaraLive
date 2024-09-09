@@ -7,7 +7,7 @@ from kivy.uix.button import Button
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.utils import asynckivy 
 from kivymd.toast import toast
-from threading import Thread
+from kivy.core.window import Window
 from studio.Service.NotificationService import NotificationService
 from studio.constants.GetNetworks import GetNetworks
 from studio.controller.ConnectLiveController import ConnectLiveController
@@ -21,9 +21,7 @@ from studio.view.CameraFrame import Camera
 from studio.view.CardAudio import CardAudio
 from studio.view.MyProcess import MyProcess
 from studio.view.ScreenMain import MainScreenView, ScreenMain
-from kivymd.icon_definitions import md_icons
 from studio.view.TabVideos import CardScrollImage
-
 
 class AppCameraLive(MDApp):
  
@@ -39,7 +37,7 @@ class AppCameraLive(MDApp):
 
     def build(self) -> MDScreen:
         self.title = "Cam Live"
-        self.icon = "studio/asset/Logo.ico"
+        Window.icon = "studio/asset/Logo.ico"
         return self.main_view
 
     def on_start(self):
@@ -78,12 +76,18 @@ class AppCameraLive(MDApp):
         self.data.manager.stop_all_threads()
         self.data.db_manager.close_connection()
 
-    def add_tab(self, text):
+    def add_tab(self, text=None, cam=None):
         try:
-            self.data.index += 1
-            tab = CardScrollImage(id=str(self.data.index), app=self, text=text)
-            tab.on_start()
-            self.screenMain.ids.box_video.add_widget(tab) 
+            if text:
+                self.data.index += 1
+                tab = CardScrollImage(id=str(self.data.index), app=self, text=text)
+                tab.on_start()
+                self.screenMain.ids.box_video.add_widget(tab) 
+            else:
+                self.data.index += 1
+                tab = CardScrollImage(id=str(cam[1]), app=self, text=cam[2])
+                tab.on_start()
+                self.screenMain.ids.box_video.add_widget(tab) 
         except Exception as e:
             print(e)
         self.affiche_audio()
@@ -123,6 +127,7 @@ class AppCameraLive(MDApp):
     
     async def async_cam_thread(self):
         text = self.screenMain.ids.lien.text
+        print(text)
         if text:
             asynckivy.start(self.start_source(text))
     
@@ -143,10 +148,7 @@ class AppCameraLive(MDApp):
             print(f"start_source====>>>> {lancer}")
             if not cam:
                 self.data.listCam.append((text, lancer))
-                if self.data.define_session:
-                    insert_sql = "INSERT INTO camlists (cam_label, save, format, fk_session) VALUES (?, ?, ?, ?)"
-                    self.data.db_manager.insert_data(insert_sql, (text, True, "", self.data.define_session[0]))
-
+                
     def affiche_format(self):
        
         self.menu_items_format = [
@@ -215,8 +217,7 @@ class AppCameraLive(MDApp):
         if ip == 0:
             self.screenMain.ids.lien.text = str(f"{ip}")
         else:
-            self.screenMain.ids.lien.text = str(f"https:/{ip}")
-            self.screenMain.ids.lien.focus = True
+            self.screenMain.ids.lien.text = str(f"https://{ip}")
         if self.dropdown2:
             self.dropdown2.dismiss()
     
@@ -247,7 +248,14 @@ class AppCameraLive(MDApp):
         self.data.connectLiveController.stop()
 
     def demarer_session(self):
-        pass
+        if self.data.define_session:
+            select_cams_sql = "SELECT * FROM camlists WHERE fk_session=?"
+            cams = self.data.db_manager.fetch_data(select_cams_sql, (self.data.define_session[0],))
+            if cams:
+                print(cams)
+                for cam in cams:
+                    print(cam)
+                    self.add_tab(None, cam)
 
 app = AppCameraLive()
 app.run()

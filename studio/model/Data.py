@@ -2,14 +2,14 @@ import hashlib
 import os
 import re
 from studio.Service.DBCamlive import DatabaseManager
-from studio.Service.NotificationService import Compte, Connexion, NotificationService
+from studio.Service.NotificationService import Compte, Connexion
 from studio.Service.Traitement import Traitement # type: ignore
 from studio.controller.CamController import CamController
 from studio.model.ThreadClass import ThreadManager
 from kivymd.uix.dialog import MDDialog
 from kivymd.toast import toast
-from kivymd.uix.button import MDFlatButton, MDRectangleFlatButton
-from studio.controller.ExpansionPanel import ExpansionPanelVid, FocusButton, IconButtonAction
+from kivymd.uix.button import MDRectangleFlatButton
+from studio.controller.ExpansionPanel import ExpansionPanelVid
 from kivy.properties import StringProperty
 from kivymd.uix.list import OneLineAvatarListItem
 
@@ -43,6 +43,9 @@ class Data:
         self.traitement = Traitement()
     
     def connexion_sessions(self, dt):
+        self.dialogCompteBox.dismiss()
+        if self.dialogCompteBox:
+            self.dialogCompteBox = None
         self.sessions()
 
     def sessions(self):
@@ -113,6 +116,9 @@ class Data:
             self.dialogConnexionBox.dismiss()
             self.app.main_view.transition.direction = "left"
             self.app.main_view.current = "screen main"
+            self.app.demarer_session()
+            if self.dialogCompteBox:
+                self.dialogCompteBox = None
         except Exception as e:
             print(e)
             return toast("Une erreur est survenue veillez réessayé")
@@ -145,6 +151,9 @@ class Data:
             self.dialogConnexionBox.dismiss()
             self.app.main_view.transition.direction = "left"
             self.app.main_view.current = "screen main"
+            self.app.demarer_session()
+            if self.dialogCompteBox:
+                self.dialogCompteBox = None
         except Exception as e:
             print(e)
             return toast("Une erreur est survenue veillez réessayé")
@@ -208,13 +217,36 @@ class Data:
         self.dialogCompteBox.open()
 
     def modifier(self, dt):
-        self.app.main_view.transition.direction = "left"
-        self.app.main_view.current = "screen main"
+        email = self.email
+        text = str(self.dialogCompteBox.content_cls.sessions.text_field.text)
+        print(text)
+        if text == "":
+            return toast("Entrer invalide")
+        select_user_sql = "SELECT * FROM users WHERE email = ?;"
+        user = self.db_manager.fetch_data(select_user_sql, (email,))
+        user = user[0]
+        if user:
+            select_session_sql = "SELECT * FROM sessions WHERE fk_user=? AND name=?"
+            sessions = self.db_manager.fetch_data(select_session_sql , (user[0], text))
+            if not sessions:
+                insert_sql = "INSERT INTO sessions (name, fk_user) VALUES (?, ?)"
+                self.db_manager.insert_data(insert_sql, (text, user[0]))
+                select_session_sql = "SELECT * FROM sessions WHERE fk_user=? AND name = ?"
+                list_sessions = self.db_manager.fetch_data(select_session_sql, (user[0], text))
+                if list_sessions:
+                    self.define_session = list_sessions[0]
+            select_session_sql = "SELECT * FROM sessions WHERE fk_user=? ORDER BY id DESC"
+            self.list_sessions = self.db_manager.fetch_data(select_session_sql, (user[0],))
+            if self.dialogSessionBox:
+                self.dialogSessionBox = None
+
         self.dialogCompteBox.dismiss()
     
     def deconnexion(self, dt):
         self.email = None
         self.dialogCompteBox.dismiss()
+        if self.dialogCompteBox:
+            self.dialogCompteBox = None
     
     def session_list(self, text=None):
         items_sessions = []
@@ -240,7 +272,8 @@ class Data:
         if text:
             text.text = session[1]
         self.dialogSessionBox.dismiss()
-
+        if self.dialogSessionBox:
+            self.dialogSessionBox = None
 
 
 class Item(OneLineAvatarListItem):

@@ -1,84 +1,170 @@
-from kivy.app import App
-from kivy.uix.image import Image
-from kivy.uix.boxlayout import BoxLayout
-from kivy.graphics.texture import Texture
-from ultralytics import YOLO
+from deepface import DeepFace
 import cv2
-import math
-import time
+from datetime import datetime
+from kivy.graphics.texture import Texture
+from kivy.uix.image import Image
+from kivymd.app import MDApp
+from kivy.clock import Clock
+from kivy.uix.boxlayout import BoxLayout
+import os
+from PIL import Image as PILImage
+# DeepFace.build_model('VGG-Face', weights_path='path/to/vgg_face_weights.h5')
 
-class YoloApp(App):
+class CameraApp(MDApp):
     def build(self):
-        # Create layout
-        layout = BoxLayout(orientation='vertical')
-        self.img_widget = Image()
-        layout.add_widget(self.img_widget)
-        
-        # Process and update image
-        self.process_and_display_image()
-        
+        self.image = Image()
+        layout = BoxLayout()
+        layout.add_widget(self.image)
+        self.capture = cv2.VideoCapture(0)
+        Clock.schedule_interval(self.update, 1.0/10.0)  # Augmentez l'intervalle pour réduire la fréquence de mise à jour
         return layout
 
-    def process_and_display_image(self):
-        # Load YOLO model
-        model = YOLO('../YOLO Weights/yolov8n.pt')
-        
-        # Capture a single frame from the webcam
-        cap = cv2.VideoCapture(0)
-        cap.set(3, 1280)
-        cap.set(4, 720)
-        success, img = cap.read()
-        #cap.release()
-        
-        while success:
-            results = model(img, stream=True)
-            classNames = ["personne", "vélo", "voiture", "moto", "avion", "bus", 
-                          "train", "camion", "bateau", "feu de signalisation", "bouche d'incendie", 
-                          "panneau d'arrêt", "parcmètre", "banc", "oiseau", "chat", "chien", 
-                          "cheval", "mouton", "vache", "éléphant", "ours", "zèbre", "girafe", 
-                          "sac à dos", "parapluie", "sac à main", "cravate", "valise", "frisbee", 
-                          "skis", "snowboard", "ballon de sport", "cerf-volant", "batte de baseball", 
-                          "gant de baseball", "planche à roulettes", "planche de surf", "raquette de tennis", 
-                          "bouteille", "verre à vin", "tasse", "fourchette", "couteau", "cuillère", "bol", 
-                          "banane", "pomme", "sandwich", "orange", "brocoli", "carotte", 
-                          "hot-dog", "pizza", "donut", "gâteau", "chaise", "canapé", 
-                          "plante en pot", "lit", "table à manger", "toilettes", "écran de télévision", 
-                          "ordinateur portable", "souris", "télécommande", "clavier", "téléphone portable", 
-                          "micro-ondes", "four", "grille-pain", "évier", "réfrigérateur", 
-                          "livre", "horloge", "vase", "ciseaux", "ours en peluche", "sèche-cheveux", 
-                          "brosse à dents"]
+    def save_image(self, image):
+        current_dir = os.getcwd()
+        name = "detectObject_" + datetime.now().strftime("%Y%m%d_%H%M%S") + '.png'  # Réduit la longueur du nom du fichier
+        path = os.path.join(current_dir, "enregistrement", "capture", name)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image_pil = PILImage.fromarray(image)
+        image_pil.save(path)
 
-            for r in results:
-                boxes = r.boxes
-                for box in boxes:
-                    x1, y1, x2, y2 = box.xyxy[0]
-                    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-                    w, h = x2 - x1, y2 - y1
-                    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    def update(self, dt):
+        ret, frame = self.capture.read()
+        if not ret:
+            return
 
-                    conf = math.ceil((box.conf[0] * 100)) / 100
-                    cls = box.cls[0]
-                    name = classNames[int(cls)]
+        # Redimensionner le cadre pour améliorer la performance
+        small_frame = cv2.resize(frame, (640, 480))  # Modifiez la taille en fonction de vos besoins
+        # rgb_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
+        # frame_path = os.path.join("temp_frame.jpg")
+        # cv2.imwrite(frame_path, rgb_frame)
 
-                    self.draw_text_with_background(img, f'{name} {conf}', (max(0, x1), max(35, y1)))
+        # Comparer les visages
+        try:
+            result = DeepFace.verify(source_image_path, small_frame)
+            if result["verified"]:
+                print(result)
+                top, right, bottom, left = (50, 50, 200, 200)  # Dummy coordinates; update with actual face location if needed
+                    # cv2.rectangle(small_frame, (left, top), (right, bottom), (0, 255, 0), 2)
+                    # self.save_image(small_frame)
+        except Exception as e:
+            print("Erreur lors de la comparaison des visages:", e)
 
-            # Convert image to texture and update the widget
-            buf = cv2.flip(img, 0).tostring()
-            image_texture = Texture.create(size=(img.shape[1], img.shape[0]), colorfmt='bgr')
-            image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-            self.img_widget.texture = image_texture
-            time.sleep(50)
+        buf1 = cv2.flip(small_frame, 0)
+        buf = buf1.tobytes()
+        image_texture = Texture.create(size=(small_frame.shape[1], small_frame.shape[0]), colorfmt='bgr')
+        image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+        self.image.texture = image_texture
+
+    def on_stop(self):
+        self.capture.release()
+
+if __name__ == '__main__':
+    # Charger l'image source
+    source_image_path = r"C:\Users\issrael BOCO\Desktop\ISRAEL\Projet\camaraLive\studio\Service\image.jpeg"
+    CameraApp().run()
 
 
-    def draw_text_with_background(self, img, text, pos, font_scale=0.5, thickness=1, text_color=(255, 255, 255), bg_color=(0, 0, 0)):
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        text_size, _ = cv2.getTextSize(text, font, font_scale, thickness)
-        text_w, text_h = text_size
-        x, y = pos
-        # Draw background rectangle
-        cv2.rectangle(img, (x, y - text_h - 5), (x + text_w, y + 5), bg_color, -1)
-        # Put the text on the image
-        cv2.putText(img, text, (x, y), font, font_scale, text_color, thickness)
 
-if __name__ == "__main__":
-    YoloApp().run()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# import face_recognition
+# import dlib
+# import cv2
+# from datetime import datetime
+# from kivy.graphics.texture import Texture
+# from kivy.uix.image import Image
+# from kivymd.app import MDApp
+# from kivy.clock import Clock
+# from kivy.uix.boxlayout import BoxLayout
+# import os
+# from PIL import Image as PILImage
+
+# class CameraApp(MDApp):
+#     def build(self):
+#         self.image = Image()
+#         layout = BoxLayout()
+#         layout.add_widget(self.image)
+#         self.capture = cv2.VideoCapture(0)
+#         Clock.schedule_interval(self.update, 1.0/10.0)  # Augmentez l'intervalle pour réduire la fréquence de mise à jour
+#         return layout
+
+#     def save_image(self, image):
+#         current_dir = os.getcwd()
+#         name = "detectObject_" + datetime.now().strftime("%Y%m%d_%H%M%S") + '.png'  # Réduit la longueur du nom du fichier
+#         path = os.path.join(current_dir, "enregistrement", "capture", name)
+#         os.makedirs(os.path.dirname(path), exist_ok=True)
+#         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+#         image_pil = PILImage.fromarray(image)
+#         image_pil.save(path)
+
+#     def update(self, dt):
+#         ret, frame = self.capture.read()
+#         if not ret:
+#             return
+
+#         # Redimensionner le cadre pour améliorer la performance
+#         small_frame = cv2.resize(frame, (640, 480))  # Modifiez la taille en fonction de vos besoins
+#         rgb_frame = small_frame[:, :, ::-1]
+
+#         # Trouver les emplacements et les encodages des visages
+#         face_locations = face_recognition.face_locations(rgb_frame)
+#         face_encodings = face_recognition.face_encodings(rgb_frame, known_face_locations=face_locations)
+
+#         for face_encoding, face_location in zip(face_encodings, face_locations):
+#             matches = face_recognition.compare_faces([source_encoding], face_encoding)
+#             if True in matches:
+#                 top, right, bottom, left = face_location
+#                 cv2.rectangle(small_frame, (left, top), (right, bottom), (0, 255, 0), 2)
+#                 self.save_image(small_frame)
+
+#         buf1 = cv2.flip(small_frame, 0)
+#         buf = buf1.tobytes()
+#         image_texture = Texture.create(size=(small_frame.shape[1], small_frame.shape[0]), colorfmt='bgr')
+#         image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+#         self.image.texture = image_texture
+
+#     def on_stop(self):
+#         self.capture.release()
+
+# if __name__ == '__main__':
+#     # Charger l'image source
+#     source_image = face_recognition.load_image_file(r"C:\Users\issrael BOCO\Desktop\ISRAEL\Projet\camaraLive\enregistrement\capture\detectOject_Monday_12_August_2024_06_10_37.png")
+#     source_image = cv2.resize(source_image, (640, 480))  # Redimensionner l'image source
+#     face_encodings = face_recognition.face_encodings(source_image)
+#     print(face_encodings)
+#     if len(face_encodings) > 0:
+#         source_encoding = face_encodings[0]
+#         CameraApp().run()
+#     else:
+#         print("Aucun visage détecté dans l'image source.")
+
+# # distances = face_recognition.face_distance([source_encoding], face_encoding)
+# # match = distances[0] <= 0.6
+
+
+
+
+
+
+
+
+
+
+
+# {'verified': True, 'distance': 0.6268175575213742, 'threshold': 0.68, 'model': 'VGG-Face', 'detector_backend': 'opencv', 'similarity_metric': 'cosine', 'facial_areas': {'img1': {'x': 181, 'y': 234, 'w': 472, 'h': 472, 'left_eye': None, 'right_eye': None}, 'img2': {'x': 190, 'y': 138, 'w': 223, 'h': 223, 'left_eye': None, 'right_eye': None}}, 'time': 4.15}

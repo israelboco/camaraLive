@@ -220,10 +220,10 @@
                             adaptive_size: True
                             markup: True
                         
-                        CheckboxLeftWidget:
+                        MDSwitch:
                             id: check_person
-                            group: "check"
                             adaptive_size: True
+                            pos_hint: {'center_x': .5, 'center_y': .5}
                             on_active: root.on_checkbox_active("Personne", self.active)
 
                     MDBoxLayout:
@@ -234,10 +234,10 @@
                             adaptive_size: True
                             markup: True
                         
-                        CheckboxLeftWidget:
-                            id: check_object
-                            group: "check"
+                        MDSwitch:
+                            id: check_objet
                             adaptive_size: True
+                            pos_hint: {'center_x': .5, 'center_y': .5}
                             on_active: root.on_checkbox_active("Objet", self.active)
 
                 MDRectangleFlatButton:

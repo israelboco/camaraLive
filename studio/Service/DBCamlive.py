@@ -17,6 +17,7 @@ class DatabaseManager:
                     password TEXT NOT NULL
                 );
 
+                --DROP TABLE IF EXISTS sessions;
                 CREATE TABLE IF NOT EXISTS sessions (
                     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
                     name TEXT NOT NULL,
@@ -35,8 +36,10 @@ class DatabaseManager:
                     FOREIGN KEY(fk_session) REFERENCES sessions(id) ON DELETE CASCADE
                 );
 
+                --DROP TABLE IF EXISTS camlists;
                 CREATE TABLE IF NOT EXISTS camlists (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    id INTEGER DEFAULT NULL,
+                    tab_id TEXT PRIMARY KEY,
                     cam_label TEXT DEFAULT NULL,
                     save BOOLEAN DEFAULT FALSE,
                     format TEXT DEFAULT NULL,
@@ -44,14 +47,17 @@ class DatabaseManager:
                     FOREIGN KEY(fk_session) REFERENCES sessions(id) ON DELETE CASCADE
                 );
 
+                --DROP TABLE IF EXISTS traitements;
                 CREATE TABLE IF NOT EXISTS traitements (
                     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-                    cam_label TEXT DEFAULT NULL,
-                    detection BOOLEAN DEFAULT FALSE,
-                    path TEXT DEFAULT NULL,
-                    active_detection TEXT DEFAULT NULL,
-                    etat BOOLEAN DEFAULT FALSE,
+                    type_objet TEXT DEFAULT 'personne',
+                    detect_path TEXT DEFAULT NULL,
+                    face REAL DEFAULT 0,
+                    profile REAL DEFAULT 0,
+                    eye REAL DEFAULT 0,
+                    fk_cam TEXT NOT NULL,
                     fk_session INTEGER NOT NULL,
+                    FOREIGN KEY(fk_cam) REFERENCES camlists(tab_id) ON DELETE CASCADE,
                     FOREIGN KEY(fk_session) REFERENCES sessions(id) ON DELETE CASCADE
                 );
                 """

@@ -1,5 +1,4 @@
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.relativelayout import MDRelativeLayout
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.screenmanager import MDScreenManager
 from kivymd.uix.card import MDCard
@@ -9,10 +8,9 @@ from studio.Service.NotificationService import NotificationService
 from tkinter import filedialog
 from kivymd.uix.filemanager import MDFileManager
 from kivymd.toast import toast
-import cv2
+from kivymd.uix.button import MDRectangleFlatButton
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.clock import Clock
-from kivy.core.image import Texture
 from kivymd.utils import asynckivy
 
 from studio.constants.GetNetworks import GetNetworks
@@ -55,6 +53,7 @@ class CardReducteImage(MDCard, FocusBehavior):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.controle = None
+        self.dialogTraiteBox = None
         self.ids.check_person.active = True
         self.file_manager = MDFileManager(
             exit_manager=self.exit_manager,
@@ -77,7 +76,7 @@ class CardReducteImage(MDCard, FocusBehavior):
     def start(self):
         self.ids.lien.text = self.controle.text
         if self.controle.detect_path:
-            self.ids.i_source.texture = self.controle.detect_path
+            self.ids.i_source.source = self.controle.detect_path
             self.ids.check_person.active = True
     
     def listcamera(self):
@@ -87,15 +86,78 @@ class CardReducteImage(MDCard, FocusBehavior):
         asynckivy.start(self.controle.on_start_video(self.ids.lien.text))
 
     def on_checkbox_active(self, type, active):
-        print(type)
-        print(active)
         if self.controle:
             if type == "Objet":
                 self.controle.type_objet = True
                 self.controle.type_personne = False
-            if type == "Personne":
+                if self.app.data.define_session:
+                    select_traite_sql = "SELECT * FROM traitements WHERE fk_cam=? AND fk_session=?"
+                    traite = self.app.data.db_manager.fetch_data(select_traite_sql, (self.controle.id, self.app.data.define_session[0]))
+                    if traite:
+                        update_sql = "UPDATE traitements SET type_objet = ? WHERE fk_cam = ? AND fk_session = ?"
+                        self.app.data.db_manager.update_data(update_sql, ("object", self.controle.id, self.app.data.define_session[0]))
+                self.ids.check_person.active = False
+            elif type == "Personne":
                 self.controle.type_objet = False
                 self.controle.type_personne = True
+                self.ids.check_objet.active = False
+                self.dialog_profile()
+
+    def dialog_profile(self):
+        if not self.dialogTraiteBox:
+            self.dialogTraiteBox = MDDialog(
+                    title="[b][color=#5AA6FF]Config detection Personne[/color][/b]",
+                    type="custom",
+                    content_cls=DetectPerson(),
+                    md_bg_color="#262626",
+                    buttons=[
+                        MDRectangleFlatButton(
+                            text="Annuler",
+                            theme_text_color="Custom",
+                            text_color=self.app.theme_cls.primary_color,
+                            on_release=self.cancel
+                        ),
+                        MDRectangleFlatButton(
+                            text="Enregistrer",
+                            theme_text_color="Custom",
+                            text_color=self.app.theme_cls.primary_color,
+                            on_release=self.save_config
+                        ),
+                    ],
+            )
+
+        self.dialogTraiteBox.open()
+        self.dialogTraiteBox.content_cls.ids.face.text = str(self.controle.face * 100)
+        self.dialogTraiteBox.content_cls.ids.profile.text = str(self.controle.profile * 100)
+        self.dialogTraiteBox.content_cls.ids.eye.text = str(self.controle.eye * 100)
+    
+    def cancel(self, dt):
+        self.dialogTraiteBox.dismiss()
+
+    def save_config(self, dt):
+        face = float(self.dialogTraiteBox.content_cls.ids.face.text) / 100
+        profile = float(self.dialogTraiteBox.content_cls.ids.profile.text) / 100
+        eye = float(self.dialogTraiteBox.content_cls.ids.eye.text) / 100
+        if self.app.data.define_session:
+            select_traite_sql = "SELECT * FROM traitements WHERE fk_cam=? AND fk_session=?"
+            traite = self.app.data.db_manager.fetch_data(select_traite_sql, (self.controle.id, self.app.data.define_session[0]))
+            if traite:
+                update_sql = "UPDATE traitements SET type_objet = ? WHERE fk_cam = ? AND fk_session = ?"
+                self.app.data.db_manager.update_data(update_sql, ("personne", self.controle.id, self.app.data.define_session[0]))
+                update_sql = "UPDATE traitements SET face = ? WHERE fk_cam = ? AND fk_session = ?"
+                self.app.data.db_manager.update_data(update_sql, (face, self.controle.id, self.app.data.define_session[0]))
+                update_sql = "UPDATE traitements SET profile = ? WHERE fk_cam = ? AND fk_session = ?"
+                self.app.data.db_manager.update_data(update_sql, (profile, self.controle.id, self.app.data.define_session[0]))
+                update_sql = "UPDATE traitements SET eye = ? WHERE fk_cam = ? AND fk_session = ?"
+                self.app.data.db_manager.update_data(update_sql, (eye, self.controle.id, self.app.data.define_session[0]))
+                select_traite_sql = "SELECT * FROM traitements WHERE fk_cam=? AND fk_session=?"
+                traite = self.app.data.db_manager.fetch_data(select_traite_sql, (self.controle.id, self.app.data.define_session[0]))
+                data = traite[0]
+                self.controle.init_config((data[1], data[2], data[3], data[4], data[5]))
+        else:
+            data = ("personne", self.controle.detect_path, face, profile, eye)
+            self.controle.init_config(data)
+        self.dialogTraiteBox.dismiss()
 
     def file_manager_open(self):
         if not self.controle.type_personne:
@@ -108,8 +170,14 @@ class CardReducteImage(MDCard, FocusBehavior):
         )
         self.ids.i_source.source = path
         self.controle.detect_path = path
+        if self.app.data.define_session:
+            select_traite_sql = "SELECT * FROM traitements WHERE fk_cam=? AND fk_session=?"
+            traite = self.app.data.db_manager.fetch_data(select_traite_sql, (self.controle.id, self.app.data.define_session[0]))
+            if traite:
+                update_sql = "UPDATE traitements SET detect_path = ? WHERE fk_cam = ? AND fk_session = ?"
+                self.app.data.db_manager.update_data(update_sql, (path, self.controle.id, self.app.data.define_session[0]))
 
-    def detect_object(self, dt):
+    def detect_object(self, dt=None):
         asynckivy.start(self.detect_object_async())
     
     async def detect_object_async(self):
@@ -128,15 +196,14 @@ class CardReducteImage(MDCard, FocusBehavior):
                 except Exception as e:
                     print("file_manager_open ===>")
                     print(e)
-            if self.controle.type_objet:
+            if self.controle.start_traint:
                 self.afert(5, self.detect_object)
     
     def lancerTraitement(self):
         if self.controle.type_objet and self.ids.lancer.text == "Lancer":
-            self.controle.type_personne = False
+            self.controle.start_traint = True
             self.detect_object()
         if self.controle.type_personne and self.ids.lancer.text == "Lancer":
-            self.controle.type_objet = False
             self.controle.start_traint = True
             self.app.data.traitement.start_traint(self.controle)
             self.app.data.traitement.start(self.controle.id)   
@@ -144,9 +211,9 @@ class CardReducteImage(MDCard, FocusBehavior):
             self.ids.lancer.text = "Annuler"
         else:
             self.ids.lancer.text = "Lancer"
-            self.controle.start_traint = False
-            self.controle.type_objet = False
             self.controle.type_personne = False
+            self.controle.type_objet = False
+            self.controle.start_traint = False
 
 
     def afert(self, delay, func):
@@ -169,3 +236,13 @@ class AProposBox(MDBoxLayout):
           
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class DetectPerson(MDBoxLayout):
+    
+    def validate_float(self, instance):
+        try:
+            float(instance.text)
+            instance.error = False
+        except ValueError:
+            instance.error = True

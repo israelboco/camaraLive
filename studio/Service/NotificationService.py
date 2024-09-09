@@ -169,8 +169,7 @@ class AddCamBox(MDBoxLayout):
         if ip == 0:
             self.ids.lien.text = str(f"{ip}")
         else:
-            self.ids.lien.text = str(f"https:/{ip}")
-        self.ids.lien.on_focus = True
+            self.ids.lien.text = str(f"https://{ip}")
         if self.dropdown2:
             self.dropdown2.dismiss()
 
@@ -189,3 +188,15 @@ class TextFieldRound(MDRelativeLayout):
     
     def affiche_session(self):
         self.app.data.session_list(self.text_field)
+
+
+
+    def selectDropdownNetwork(self, text):
+        ip = text
+        if ip == 0:
+            self.screenMain.ids.lien.text = str(f"{ip}")
+        else:
+            self.screenMain.ids.lien.text = str(f"https:/{ip}")
+            self.screenMain.ids.lien.focus = True
+        if self.dropdown2:
+            self.dropdown2.dismiss()
