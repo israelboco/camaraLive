@@ -9,6 +9,7 @@ from kivymd.utils import asynckivy
 from threading import Thread
 from studio.view import AudioRecorder, VideoRecorder
 from studio.view.CameraFrame import Camera
+from kivymd.toast import toast
 
 
 class CamCapture:
@@ -30,7 +31,7 @@ class CamCapture:
         self.app = None
 
         self.cameraVideo = Camera()
-
+        self.is_stop = True
 
     def captureCamera(self):
         self.capture = 1
@@ -46,6 +47,7 @@ class CamCapture:
     
     def stop_video(self, mix=False):
         try:
+            print('----------------Stop----------')
             self.videoCamera = None
             if mix:
                 asynckivy.start(self.cameraVideo.stop(True))
@@ -54,13 +56,19 @@ class CamCapture:
             if self.recording:
                 self.stop_record()
             self.videoCamera = None
+            self.is_stop = True
         except Exception as e:
             self.videoCamera = None
+            self.is_stop = True
             print(e)
+        
+        print(self.videoCamera)
+        print(self.is_stop)
 
     def enregistrer(self):
         self.recording = True
         print("Star record: " + str(self.recording))
+        asynckivy.start(self.cameraVideo.record_demarage(self.frames_to_record))
 
     async def lancer(self, cam=None, app=None):
         self.app = app
@@ -72,6 +80,7 @@ class CamCapture:
                 await asynckivy.sleep(1.5)
                 self.videoCamera = self.cameraVideo.video_Camera
             print(f"lancer====>>>> {self.videoCamera}")
+            self.is_stop = False
             self.update()
             return self.videoCamera
         else:
@@ -79,8 +88,24 @@ class CamCapture:
             await asynckivy.sleep(0.6)
             self.videoCamera = self.cameraVideo.video_Camera
             print(f"lancer====>>>> {cam}")
+            self.is_stop = False
             self.update()
             return cam
+    
+    async def reconnect_lancer(self):
+        if self.videoCamera is None:
+            print(self.lien)
+            await self.cameraVideo.afficheCamara(self.lien)
+            await asynckivy.sleep(1.5)
+            self.videoCamera = self.cameraVideo.video_Camera
+            self.is_stop = False
+            self.update()
+        print(f"lancer====>>>> {self.videoCamera}")
+        return self.videoCamera
+
+    def init_swhich(self):
+        self.is_stop = False
+        self.update()
     
     def recordUpdate(self):
         if self.videoCamera:
@@ -113,14 +138,40 @@ class CamCapture:
         pass
 
     def update(self, dt=None):
-
-        if self.videoCamera:
+        # Vérification si la vidéo est arrêtée ou si la caméra est absente
+        if self.is_stop or self.videoCamera is None or not self.videoCamera.isOpened():
+            print("🚨 La caméra est arrêtée ou déconnectée.")
+            return
+    
+        async def start():
+            # Vérification si la vidéo est arrêtée ou si la caméra est absente
+            if self.is_stop or self.videoCamera is None:
+                return
             # Lire une image depuis le flux vidéo
             ret, frame = self.videoCamera.read()
+            
+            if not ret and self.videoCamera:
+                toast("⚠️ Flux vidéo interrompu, tentative de reconnexion...")
+                try:
+                    self.afert(1, self.update)
+                    if not self.videoCamera.isOpened():
+                        toast("❌ Échec de la reconnexion au flux vidéo.")
+                        await self.reconnect_lancer()
+                        # self.afert(1, self.update)  # Retenter après 1 seconde
+                        return
+                except Exception as e:
+                    print(f"🚨 Erreur lors de la réouverture de la caméra : {e}")
+                    await self.reconnect_lancer()
+                    # Clock.schedule_once(self.update, 1)
+                    return
+  
             # Appeler récursivement la fonction update après un certain délai
             if ret:
                 buf1 = cv2.flip(frame, 0)
-                buf = buf1.tostring()
+                # buf = buf1.tostring()
+                # image_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
+                # image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+                buf = buf1.tobytes()
                 image_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
                 image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                 # display image from the texture
@@ -135,6 +186,9 @@ class CamCapture:
                     self.capture += 1
                 if self.capture == 2:
                     self.capture = 0
+            self.frames_to_record.append(frame)
+        if not self.is_stop or self.videoCamera or self.videoCamera.isOpened():
+            asynckivy.start(start())
 
             time = 1 / 30
             self.afert(time, self.update)
@@ -145,6 +199,7 @@ class CamCapture:
                 await self.cameraVideo.update_enregistrer(self.frames_to_record)
                 self.frames_to_record = []
         asynckivy.start(record())
+        self.afert(20, self.record_update)
 
         # self.record_update()
     def stopCamera(self):

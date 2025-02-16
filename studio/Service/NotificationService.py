@@ -21,18 +21,18 @@ class NotificationService:
                     type="custom",
                     content_cls=ConnectLiveBox(),
                     md_bg_color="#262626",
-                    buttons=[
-                        MDRectangleFlatButton(
-                            text="Annuler",
-                            theme_text_color="Custom",
-                            text_color="#4287f5",
-                        ),
-                        MDRectangleFlatButton(
-                            text="Connexion",
-                            theme_text_color="Custom",
-                            text_color="#4287f5",
-                        ),
-                    ],
+                    # buttons=[
+                    #     MDRectangleFlatButton(
+                    #         text="Annuler",
+                    #         theme_text_color="Custom",
+                    #         text_color="#4287f5",
+                    #     ),
+                    #     MDRectangleFlatButton(
+                    #         text="Connexion",
+                    #         theme_text_color="Custom",
+                    #         text_color="#4287f5",
+                    #     ),
+                    # ],
             )
         self.dialogConnectLiveBox.open()    
 

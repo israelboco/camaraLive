@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['main.py'],
+    ['C:\\Users\\issrael BOCO\\Desktop\\ISRAEL\\Projet\\camaraLive\\main.py'],
     pathex=[],
     binaries=[],
     datas=[('C:/Users/issrael BOCO/Desktop/ISRAEL/Projet/camaraLive/studio', 'studio/')],
@@ -21,7 +21,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name=' Camlive',
+    name='CamLive',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -32,6 +32,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['C:\\Users\\issrael BOCO\\Desktop\\ISRAEL\\Projet\\camaraLive\\studio\\asset\\Logo.ico'],
 )
 coll = COLLECT(
     exe,
@@ -40,5 +41,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name=' Camlive',
+    name='CamLive',
 )

@@ -18,7 +18,6 @@ class Data:
     index = 1
     listProces = []
     listCam = []
-    connectLiveController = None
     menu_items_format = []
     menu_items_camera = []
     resource_cam_thread = None
@@ -36,6 +35,7 @@ class Data:
     define_session = None
 
     def __init__(self, app) -> None:
+        self.connectLiveController = None
         self.camController = CamController()
         self.app = app
         self.camController.app = app
@@ -157,7 +157,6 @@ class Data:
         except Exception as e:
             print(e)
             return toast("Une erreur est survenue veillez réessayé")
-
 
     def hash_password(self, password):
         salt = os.urandom(16)

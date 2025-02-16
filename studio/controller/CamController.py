@@ -2,6 +2,7 @@ from studio.view.CamCapture import CamCapture
 from kivymd.toast import toast
 import time
 from kivy.clock import Clock
+from kivymd.utils import asynckivy
 
 
 class CamController(CamCapture):
@@ -31,6 +32,7 @@ class CamController(CamCapture):
             self.screen_video.ids.play.icon = 'play'
             self.screen_video.ids.bage_image.md_bg_color = '#fff000'
             # self.videoCamera.on_break()
+            self.stop_video(False)
             self.timer = False
         except Exception as e:
             print(e)
@@ -124,4 +126,5 @@ class CamController(CamCapture):
     
     def init_on_switch(self, cam):
         self.videoCamera = cam
+        self.init_swhich()
         return self.videoCamera

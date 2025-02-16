@@ -11,6 +11,7 @@ from studio.view.CamCapture import CamCapture
 from kivymd.toast import toast
 from threading import Thread
 from studio.view.CamViewImage import CamViewImage
+from kivy.clock import Clock
 
 
 class CardScrollImage(MDCard):
@@ -52,6 +53,7 @@ class CardScrollImage(MDCard):
             print(f"start_source====>>>> {lancer}")
             if not self.app.data.camController.videoCamera:
                 asynckivy.start(self.app.start_source(text))
+                Clock.schedule_once(self.init_app_cam, 10)
             if not cam:
                 self.app.data.listCam.append((text, lancer))
             if self.app.data.define_session:
@@ -76,6 +78,8 @@ class CardScrollImage(MDCard):
                     data = traite[0]
                     self.init_config((data[1], data[2], data[3], data[4], data[5]))
                 
+    def init_app_cam(self, dt):
+        self.camController.on_switch()
 
     def on_audio(self):
         pass

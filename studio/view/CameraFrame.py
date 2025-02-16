@@ -87,10 +87,10 @@ class Camera():
 
     async def stop(self, mix=False):
         try:
-            await asynckivy.sleep(0)
             if mix:
                 asynckivy.start(self.stop_enregistrement())
             else:
+                self.stop()
                 self.video_thread.stop()
                 self.audio_thread.stop()
             self.video_thread = None

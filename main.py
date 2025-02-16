@@ -96,6 +96,7 @@ class AppCameraLive(MDApp):
         if self.data.index > 1:
             self.data.index -= 1
         tab.camController.on_stop()
+        tab.camController = None
         self.screenMain.ids.box_video.remove_widget(
             tab
         )
@@ -143,6 +144,7 @@ class AppCameraLive(MDApp):
             return
         if not self.data.connectLiveController:
             print("===============>>>>>>> connectLiveController")
+            toast('===============>>>>>>> connectLiveController')
             self.data.connectLiveController = ConnectLiveController(self.data.camController)
         if lancer:
             print(f"start_source====>>>> {lancer}")
@@ -242,8 +244,13 @@ class AppCameraLive(MDApp):
         self.notificationService.start_connect_live()
     
     def demarer_connect_live_box(self):
-        self.data.connectLiveController.start()
-    
+        try:
+            self.data.connectLiveController.start()
+        except Exception as e:
+            print(e)
+            self.data.connectLiveController = ConnectLiveController(self.data.camController)
+            self.data.connectLiveController.start()
+
     def stop_connect_live_box(self):
         self.data.connectLiveController.stop()
 

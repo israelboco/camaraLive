@@ -3,6 +3,7 @@ from kivy.properties import ObjectProperty
 from kivy.uix.dropdown import DropDown
 from kivymd.utils import asynckivy
 from studio.controller.CamController import CamController
+from studio.controller.ConnectLiveController import ConnectLiveController
 from studio.controller.ExpansionPanel import FocusButton
 from studio.enum.FormatEnum import FormatEnum
 from studio.view.CamCapture import  CamCapture
@@ -41,13 +42,16 @@ class CamViewImage:
         if lancer:
             print(f"start_source====>>>> {lancer}")
             if not self.app.data.camController.videoCamera:
-                asynckivy.start(self.app.start_source(text))
+                await self.app.start_source(text)
             if not cam:
                 self.app.listCam.append((text, lancer))
                 if self.app.data.define_session:
                     insert_sql = "INSERT INTO camlists (cam_label, save, format, fk_session) VALUES (?, ?, ?, ?)"
                     self.app.data.db_manager.insert_data(insert_sql, (text, True, "", self.app.data.define_session[0]))
-                
+        
+            if not self.data.connectLiveController:
+                print("===============>>>>>>> connectLiveController")
+                self.app.data.connectLiveController = ConnectLiveController(self.app.data.camController)
 
     def affiche_format(self):
         if not self.dropdown:

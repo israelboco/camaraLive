@@ -3,13 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio et Vidéo Streaming sur Adress</span></title>
+    <title>Audio et Vidéo Streaming sur Adresse</title>
+    <style>
+        /* Style général */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        #client_ip {
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        /* Conteneur pour la vidéo et l'audio */
+        .media-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+        }
+
+        /* Style pour les éléments vidéo et audio */
+        #videoElement, #audioElement {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #videoElement {
+            height: auto;
+            background-color: #000;
+        }
+
+        #audioElement {
+            background-color: #f1f1f1;
+        }
+
+        /* Style pour les messages d'erreur */
+        .error-message {
+            color: #ff0000;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .media-container {
+                width: 95%;
+                padding: 10px;
+            }
+
+            #videoElement, #audioElement {
+                max-width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Audio et Vidéo Streaming sur Adress <span id="client_ip">{{ client_ip }}</span></h1>
+    <h1>Streaming audio et vidéo sur l'adresse <span id="client_ip">{{ client_ip }}</span></h1>
 
-    <video id="videoElement" controls autoplay></video>
-    <audio id="audioElement" controls autoplay></audio>
+    <!-- <div class="media-container">
+        <video id="videoElement" controls autoplay></video>
+        <audio id="audioElement" controls autoplay></audio>
+    </div> -->
+    <div class="media-container">
+        <img id="videoElement" src="/camlive/video_feed" alt="Flux vidéo en direct">
+        <audio id="audioElement" controls autoplay>
+            <source src="/camlive/audio_feed" type="audio/x-wav">
+            Votre navigateur ne supporte pas l'audio en direct.
+        </audio>
+    </div>
+
     <script src="{{ script_path }}"></script>
 </body>
 </html>

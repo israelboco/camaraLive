@@ -1,40 +1,61 @@
-const videoElement = document.getElementById('videoElement');
-const audioElement = document.getElementById('audioElement');
-const client_ip = document.getElementById('client_ip');
+// const videoElement = document.getElementById('videoElement');
+// const audioElement = document.getElementById('audioElement');
+// const client_ip = document.getElementById('client_ip');
 
-async function startVideo() {
-    try {
-        let headers = new Headers();
-        headers.append('Content-Type', 'application/json');
-        headers.append('Accept', 'application/json');
-        headers.append('Access-Control-Allow-Origin', '*');
-        headers.append('Access-Control-Allow-Credentials', 'true');
-        headers.append('GET', 'POST', 'OPTIONS');
-        // Récupérer le flux vidéo depuis le serveur
-        const videoStream = await fetch('http://'+ client_ip.innerHTML +':5000/camlive/video_feed',
-            {
-                mode: 'cors',
-                credentials: 'include',
-                // method: 'POST',
-                headers: headers
-            }
-        ).then(response => response.blob());
-        console.log(client_ip.innerHTML)
-        videoElement.src = URL.createObjectURL(videoStream);
+// // URL des flux audio et vidéo
+// const videoStreamUrl = `http://${client_ip.innerHTML}:5000/camlive/video_feed`;
+// const audioStreamUrl = `http://${client_ip.innerHTML}:5000/camlive/audio_feed`;
 
-        // Récupérer le flux audio depuis le serveur
-        const audioStream = await fetch('http://'+ client_ip.innerHTML +':5000/camlive/audio_feed',
-            {
-                mode: 'cors',
-                credentials: 'include',
-                // method: 'POST',
-                headers: headers
-            }
-        ).then(response => response.blob());
-        audioElement.src = URL.createObjectURL(audioStream);
-    } catch (error) {
-        console.error('Erreur lors de la récupération des flux :', error);
-    }
-}
+// // Fonction pour démarrer le flux vidéo
+// function startVideoStream() {
+//     videoElement.src = videoStreamUrl;
+//     videoElement.play().catch(error => {
+//         console.error('Erreur lors de la lecture de la vidéo :', error);
+//         alert('Erreur lors de la lecture de la vidéo. Veuillez réessayer.');
+//     });
+// }
 
-startVideo();
+// // Fonction pour démarrer le flux audio
+// function startAudioStream() {
+//     audioElement.src = audioStreamUrl;
+//     audioElement.play().catch(error => {
+//         console.error('Erreur lors de la lecture de l\'audio :', error);
+//         alert('Erreur lors de la lecture de l\'audio. Veuillez réessayer.');
+//     });
+// }
+
+// // Démarrer les flux vidéo et audio
+// startVideoStream();
+// startAudioStream();
+
+// // Gestion des erreurs
+// videoElement.onerror = (error) => {
+//     console.error('Erreur lors du chargement de la vidéo :', error);
+//     alert('Erreur lors du chargement de la vidéo. Veuillez réessayer.');
+// };
+
+// audioElement.onerror = (error) => {
+//     console.error('Erreur lors du chargement de l\'audio :', error);
+//     alert('Erreur lors du chargement de l\'audio. Veuillez réessayer.');
+// };
+
+document.addEventListener("DOMContentLoaded", function () {
+    const client_ip = document.getElementById("client_ip").textContent.trim();
+
+    const videoElement = document.getElementById("videoElement");
+    const audioElement = document.getElementById("audioElement");
+
+    // Vérifier si la vidéo et l'audio se chargent bien
+    videoElement.onerror = () => {
+        console.error("❌ Erreur chargement vidéo.");
+        alert("⚠️ Impossible de charger la vidéo.");
+    };
+
+    audioElement.onerror = () => {
+        console.error("❌ Erreur chargement audio.");
+        alert("⚠️ Impossible de charger l'audio.");
+    };
+
+    console.log("📡 Flux vidéo lancé sur :", videoElement.src);
+    console.log("🎵 Flux audio lancé sur :", audioElement.src);
+});
